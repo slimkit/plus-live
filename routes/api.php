@@ -45,6 +45,9 @@ Route::group(['prefix' => 'api/v2'], function (RouteRegisterContract $api) {
 
             // 获取用户关注列表
             $api->get('/ZB_User_Get_List', API\LiveOauthController::class . '@ZB_User_Get_List');
+
+            // 赞兑换金币
+            $api->post('/ZB_Trade_Create', API\LiveOauthController::class . '@ZB_Trade_Create');
         });
     });
 });
