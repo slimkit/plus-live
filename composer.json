@@ -1,0 +1,32 @@
+{
+    "name": "slimkit/plus-live",
+    "description": "A \"slimkit/plus-live\" package For ThinkSNS+✈️.",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": ">=7.0",
+        "illuminate/console": "^5.5",
+        "illuminate/contracts": "^5.5",
+        "illuminate/database": "^5.5",
+        "illuminate/support": "^5.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Slimkit\\PlusLive\\": "src/",
+            "Slimkit\\PlusLive\\Seeds\\": "database/seeds/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Slimkit\\PlusLive\\Providers\\AppServiceProvider",
+                "Slimkit\\PlusLive\\Providers\\ModelServiceProvider",
+                "Slimkit\\PlusLive\\Providers\\RouteServiceProvider"
+            ]
+        }
+    },
+    "version": "1.0.0"
+}
