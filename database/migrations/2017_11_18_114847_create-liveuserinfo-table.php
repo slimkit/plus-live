@@ -19,7 +19,7 @@ class CreateLiveuserinfoTable extends Migration
             $table->string('usid', 100)->unique()->comment('usid,不能修改');
             $table->string('uname', 100)->unique()->comment('昵称');
             $table->tinyInteger('sex')->comment('性别');
-            $table->string('ticket', 255)->unique()->comment('票据');
+            $table->string('ticket', 171)->unique()->comment('票据');
             $table->timestamps();
         });
     }
