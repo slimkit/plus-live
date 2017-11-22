@@ -24,7 +24,7 @@ class BaseController extends Controller
     // 获取直播服务器
     public function getStreamServerUrl () 
     {
-        if (!$this->isUrl($this->setting['stream_server'])) {
+        if (! $this->isUrl($this->setting['stream_server'])) {
             return '';
         }
 

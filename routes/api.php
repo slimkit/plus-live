@@ -37,6 +37,9 @@ Route::group(['prefix' => 'api/v2'], function (RouteRegisterContract $api) {
             // 我的页面相关
             $api->get('/users', API\LiveOauthController::class. '@index');
 
+            // 获取直播凭据
+            $api->get('/ticket', API\LiveOauthController::class.'@ZB_User_Get_ticket');
+
             // 关注用户
             $api->post('/ZB_User_Follow/{usid}', API\LiveOauthController::class. '@ZB_User_Follow');
 
