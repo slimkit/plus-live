@@ -20,7 +20,7 @@ class LiveGiftController extends BaseController
     public function handleGift (Request $request, LiveUserInfo $liveModel, User $userModel, WalletCharge $charge)
     {
         if (!$this->is_ZhiboService($request)) {
-            return response()->json(['message' => '授权错误'])->setStatusCode(401);
+            return response()->json(['status' => 0, 'msg' => '授权错误'])->setStatusCode(401);
         }
 
         $data = $request->only(['num', 'to_usid', 'usid', 'type', 'order', 'description', 'ctime', 'order_type']);
@@ -32,7 +32,7 @@ class LiveGiftController extends BaseController
         $liveUser = $userModel->newQuery()->find($liveUser);
 
         if ($liveUser->wallet->balance < $data['num']) {
-            return response()->json(['message' => '余额不足'])->setStatusCode(403);
+            return response()->json(['status' => 0, 'message' => '余额不足'])->setStatusCode(403);
         }
 
         $liveUser->getConnection()->transaction( function () use ($targetUser, $liveUser, $data, $charge) {
@@ -67,7 +67,8 @@ class LiveGiftController extends BaseController
         });
 
         return response()->json([
-            'message' => ['打赏成功'],
+            'status' => 1,
+            'data' => ['is_sync' => 1]
         ], 201);
     }
 }
