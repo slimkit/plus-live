@@ -25,7 +25,7 @@ class LiveUserController extends BaseController
      * @param  LiveUserInfo
      * @return [type]
      */
-    public function registerUser (Request $request, LiveUserInfo $model)
+    public function register(Request $request, LiveUserInfo $model)
     {
         $user = $request->user();
         $ticket = $request->input('ticket', '');
@@ -69,12 +69,14 @@ class LiveUserController extends BaseController
     }
 
     /**
-     * @param  Request
-     * @param  string usid
-     * @param  LiveUserInfo
-     * @return [mix]
+     * 获取直播服务器代码.
+     *
+     * @param Request $request
+     * @param string $usid
+     * @param LiveUserInfo $liveUser
+     * @return mixed
      */
-    public function getUserData (Request $request, string $usid, LiveUserInfo $liveUser)
+    public function getInfo(Request $request, string $usid, LiveUserInfo $liveUser)
     {
         if (!$this->is_ZhiBoService($request)) {
             return response()->json(['status' => 0, 'message' => '授权错误'])->setStatusCode(401);
@@ -96,8 +98,16 @@ class LiveUserController extends BaseController
         ]])->setStatusCode(200);
     }
 
-    // 同步数据
-    public function syncData (Request $request, string $usid, LiveUserInfo $liveUser, UserExtra $userExtra)
+    /**
+     * 同步用户信息.
+     *
+     * @param Request $request
+     * @param string $usid
+     * @param LiveUserInfo $liveUser
+     * @param UserExtra $userExtra
+     * @return mixed
+     */
+    public function sync(Request $request, string $usid, LiveUserInfo $liveUser, UserExtra $userExtra)
     {
         $data = $request->input('data');
 
@@ -122,8 +132,16 @@ class LiveUserController extends BaseController
         return response()->json(['status' => 1, 'data' => ['is_sync' => 1]])->setStatusCode(201);
     }
 
-    // 直播时推送给直播用户的粉丝
-    public function pushLive (Request $request, string $usid, LiveUserInfo $liveUser, User $user)
+    /**
+     * 推送直播信息给直播用户的粉丝.
+     *
+     * @param Request $request
+     * @param string $usid
+     * @param LiveUserInfo $liveUser
+     * @param User $user
+     * @return mixed
+     */
+    public function pushLive(Request $request, string $usid, LiveUserInfo $liveUser, User $user)
     {
         if (!$this->is_ZhiBoService($request)) {
             return response()->json(['status' => 0, 'message' => '授权错误'])->setStatusCode(401);

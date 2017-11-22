@@ -18,8 +18,14 @@ class LiveOauthController extends BaseController
         $this->userModel = $userModel;
     }
 
-
-    public function ZB_User_Get_ticket(Request $request)
+    /**
+     * 获取授权.
+     *
+     * @param Request $request
+     * @return mixed
+     * @author BS <414606094@qq.com>
+     */
+    public function getTicket(Request $request)
     {
         $user = $request->user();
         $ticket = $this->liveUser->where('uid', $user->id)->value('ticket');
@@ -51,7 +57,7 @@ class LiveOauthController extends BaseController
      * @param LiveUserInfo
      * @param User
      */
-    public function ZB_User_Get_Info (Request $request)
+    public function getLiveUser(Request $request)
     {
         $usids = explode(',', $request->input('usids'));
 
@@ -60,22 +66,40 @@ class LiveOauthController extends BaseController
         return $users;
     }
 
+    public function followAction(Request $request)
+    {
+        $action = $request->input('action');
+        switch ($action) {
+            case 1:
+                return $this->dofollow($request);
+                break;
+            case 2:
+                return $this->dounfollow($request);
+                break;
+            default:
+                # code...
+                break;
+        }
+    }
+
     /**
      * 关注用户
      * @param Request
      */
-    public function ZB_User_Follow (Request $request, string $usid)
+    public function dofollow(Request $request)
     {
         $login = $request->user();
 
+        $usid = intval($request->input('usid'));
+
         if (!$usid) {
-            return response()->json(['message' => '缺少被关注用户'], 422);
+            return response()->json(['code' => '00502','message' => '缺少被关注用户'], 422);
         }
 
         $uid = $this->liveUser->where('usid', $usid)->value('uid');
 
         if (!$uid === $login->id) {
-            return response()->json(['message' => '不能关注自己'], 400);
+            return response()->json(['code' => '00506', 'message' => '不能关注自己'], 400);
         }
 
         $follow = $this->userModel->find($uid);
@@ -84,7 +108,7 @@ class LiveOauthController extends BaseController
 
         if ($status) {
 
-            return response()->json(['massage' => '已关注过该用户'], 422);
+            return response()->json(['code' => '00506', 'message' => '已关注过该用户'], 422);
         }
 
         return $login->getConnection()->transaction(function () use ($login, $follow) {
@@ -97,7 +121,7 @@ class LiveOauthController extends BaseController
                 'user' => $login,
             ]);
 
-            return response()->json('', 204);
+            return response()->json(['code' => '00000', 'data' => ['is_follow' => 1]], 201);
         });
     }
 
@@ -105,18 +129,19 @@ class LiveOauthController extends BaseController
      * 取消关注
      * @param Request
      */
-    public function ZB_User_Unfollow (Request $request, string $usid)
+    public function dounfollow(Request $request)
     {
         $login = $request->user();
+        $usid = intval($request->input('usid'));
 
         if (!$usid) {
-            return response()->json(['message' => '缺少被取消关注的用户'], 400);
+            return response()->json(['code' => '00502', 'message' => '缺少被取消关注的用户'], 400);
         }
 
         $uid = $this->liveUser->where('usid', $usid)->value('uid');
 
         if (!$uid === $login->id) {
-            return response()->json(['message' => '不能对自己取关'], 400);
+            return response()->json(['code' => '00506', 'message' => '不能对自己取关'], 400);
         }
 
         $follow = $this->userModel->find($uid);
@@ -125,7 +150,7 @@ class LiveOauthController extends BaseController
 
         if (!$status) {
 
-            return response()->json(['massage' => '你并没有关注该用户'], 422);
+            return response()->json(['code' => '00506', 'massage' => '你并没有关注该用户'], 422);
         }
 
         return $login->getConnection()->transaction(function () use ($login, $follow) {
@@ -133,7 +158,7 @@ class LiveOauthController extends BaseController
             $login->extra()->decrement('followings_count', 1);
             $follow->extra()->decrement('followers_count', 1);
 
-            return response()->json('', 204);
+            return response()->json(['code' => '00000', 'data' => ['is_follow' => 0]], 201);
         });
     }
 
@@ -141,7 +166,7 @@ class LiveOauthController extends BaseController
      * 获取用户关注列表
      * @param Request
      */
-    public function ZB_User_Get_List (Request $request)
+    public function getUsers(Request $request)
     {
         $type = $request->query('type', 'followers');
         $offset = $request->query('offset');
@@ -224,7 +249,7 @@ class LiveOauthController extends BaseController
      * @Author   Wayne[qiaobin@zhiyicx.com]
      * @DateTime 2016-10-26T17:36:37+0800s
      */
-    public function ZB_Trade_Create(Request $request, WalletCharge $charge)
+    public function createOrder(Request $request, WalletCharge $charge)
     {
         $count = $request->input('count');
         $user = $request->user();
