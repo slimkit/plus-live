@@ -16,31 +16,41 @@ use Illuminate\Contracts\Routing\Registrar as RouteRegisterContract;
 */
 
 Route::group(['prefix' => 'api/v2'], function (RouteRegisterContract $api) {
-
     $api->group(['prefix' => 'live'], function (RouteRegisterContract $api) {
-        
         // 获取所有的直播列表
         // $api->get('/', API\HomeController::class.'@rooms');
-        
-        // 获取某个用户授权
         $api->get('/users/{usid}', API\LiveUserController::class.'@getUserData');
-
-        // 更新某个用户授权
         $api->post('/users/{usid}/sync', API\LiveUserController::class.'@syncData');
-
-        // 赠送礼物
         $api->post('/handleGift', API\LiveGiftController::class.'@handleGift');
-
-        // 推送直播信息
         $api->post('/pushLive/{usid}', API\LiveUserController::class.'@pushLive');
+
+        // 通过usid批量获取用户信息
+        $api->get('/ZB_User_Get_Info', API\LiveOauthController::class.'@ZB_User_Get_Info');
 
     });
 
     $api->group(['middleware' => 'auth:api'], function (RouteRegisterContract $api) {
         // 注册直播用户
         $api->group(['prefix' => 'live'], function (RouteRegisterContract $api) {
+            $api->post('/registerUser', API\LiveUserController::class. '@registerUser');
 
-            $api->post('/', API\HomeController::class.'@index');
+            // 我的页面相关
+            $api->get('/users', API\LiveOauthController::class. '@index');
+
+            // 获取直播凭据
+            $api->get('/ticket', API\LiveOauthController::class.'@ZB_User_Get_ticket');
+
+            // 关注用户
+            $api->post('/ZB_User_Follow/{usid}', API\LiveOauthController::class. '@ZB_User_Follow');
+
+            // 取消关注用户
+            $api->post('/ZB_User_Unfollow/{usid}', API\LiveOauthController::class. '@ZB_User_Unfollow');
+
+            // 获取用户关注列表
+            $api->get('/ZB_User_Get_List', API\LiveOauthController::class . '@ZB_User_Get_List');
+
+            // 赞兑换金币
+            $api->post('/ZB_Trade_Create', API\LiveOauthController::class . '@ZB_Trade_Create');
         });
     });
 });
