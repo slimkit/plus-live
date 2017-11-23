@@ -30,7 +30,7 @@ class LiveOauthController extends BaseController
         $user = $request->user();
         $ticket = $this->liveUser->where('uid', $user->id)->value('ticket');
         if (! $ticket) {
-            $result = app(LiveUserController::class)->registerUser($request, $this->liveUser);
+            $result = app(LiveUserController::class)->register($request, $this->liveUser);
             $result = json_decode($result->getContent(), true);
 
             if (! isset($result['ticket'])) {
