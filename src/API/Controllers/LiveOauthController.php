@@ -69,6 +69,7 @@ class LiveOauthController extends BaseController
     public function followAction(Request $request)
     {
         $action = $request->input('action');
+        $user = $request->user();
         switch ($action) {
             case 1:
                 return $this->dofollow($request);
@@ -77,7 +78,7 @@ class LiveOauthController extends BaseController
                 return $this->dounfollow($request);
                 break;
             default:
-                # code...
+                return response()->json(['code' => '00000', 'data' => ['is_follow' => (int) $user->hasFollwing($request->input('usid'))]]);
                 break;
         }
     }
