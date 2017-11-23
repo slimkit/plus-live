@@ -15,43 +15,43 @@ class HomeController
             // 注册直播服务端用户
             case 'postUser':
                 
-                return $app->call([LiveUserController::class, 'register']);
+                return $app->call([app(LiveUserController::class), 'register']);
                 break;
             
             // 获取直播服务端用户信息
             case 'getUserData':
                 
-                return $app->call([LiveUserController::class, 'getInfo']);
+                return $app->call([app(LiveUserController::class), 'getInfo']);
                 break;
 
             // 同步用户信息
             case 'syncData':
                 
-                return $app->call([LiveUserController::class, 'sync']);
+                return $app->call([app(LiveUserController::class), 'sync']);
                 break;
 
             // 获取直播凭据
             case 'ZB_User_Get_ticket':
                 
-                return $app->call([LiveOauthController::class, 'getTicket']);
+                return $app->call([app(LiveOauthController::class), 'getTicket']);
                 break;
 
             // 获取粉丝/关注用户列表
             case 'ZB_User_Get_List':
                 
-                return $app->call([LiveOauthController::class, 'getUsers']);
+                return $app->call([app(LiveOauthController::class), 'getUsers']);
                 break;
 
             // 关注/取关用户
             case 'ZB_User_Follow':
                 
-                return $app->call([LiveOauthController::class, 'followAction']);
+                return $app->call([app(LiveOauthController::class), 'followAction']);
                 break;
 
             // 发起赞兑换金币订单.
             case 'ZB_Trade_Create':
                 
-                return $app->call([LiveOauthController::class, 'createOrder']);
+                return $app->call([app(LiveOauthController::class), 'createOrder']);
                 break;
 
             default:
