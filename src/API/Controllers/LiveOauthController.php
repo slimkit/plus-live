@@ -33,14 +33,14 @@ class LiveOauthController extends BaseController
             $result = app(LiveUserController::class)->register($request, $this->liveUser);
             $result = json_decode($result->getContent(), true);
 
-            if (! isset($result['ticket'])) {
+            if (! isset($result['data']['ticket'])) {
                 return response()->json([
                     'code'    => '00500',
                     'message' => '授权验证失败'
                 ], 500);
             }
 
-            $ticket = $result['ticket'];
+            $ticket = $result['data']['ticket'];
         }
 
         return response()->json([
