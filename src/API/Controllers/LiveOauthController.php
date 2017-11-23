@@ -35,7 +35,6 @@ class LiveOauthController extends BaseController
 
             if (! isset($result['data']['ticket'])) {
                 return response()->json([
-                    'code'    => '00500',
                     'message' => '授权验证失败'
                 ], 500);
             }
@@ -43,12 +42,7 @@ class LiveOauthController extends BaseController
             $ticket = $result['data']['ticket'];
         }
 
-        return response()->json([
-            'code' => '00000',
-            'data' => [
-                'ticket' => $ticket,
-            ]
-        ], 200);
+        return response()->json($ticket, 200);
     }
 
     /**
@@ -63,7 +57,7 @@ class LiveOauthController extends BaseController
 
         $users = $this->liveUser->whereIn('usid', $usids)->with('user')->get();
 
-        return $users;
+        return response()->json($users, 200);
     }
 
     public function followAction(Request $request)
@@ -72,13 +66,13 @@ class LiveOauthController extends BaseController
         $user = $request->user();
         switch ($action) {
             case 1:
-                return $this->dofollow($request);
+                return $this->follow($request);
                 break;
             case 2:
-                return $this->dounfollow($request);
+                return $this->unfollow($request);
                 break;
             default:
-                return response()->json(['code' => '00000', 'data' => ['is_follow' => (int) $user->hasFollwing($request->input('usid'))]]);
+                return response()->json($user->hasFollwing($request->input('usid')), 200);
                 break;
         }
     }
@@ -87,20 +81,18 @@ class LiveOauthController extends BaseController
      * 关注用户
      * @param Request
      */
-    public function dofollow(Request $request)
+    public function follow(Request $request, string $usid)
     {
         $login = $request->user();
 
-        $usid = intval($request->input('usid'));
-
         if (!$usid) {
-            return response()->json(['code' => '00502','message' => '缺少被关注用户'], 422);
+            return response()->json(['message' => '缺少被关注用户'], 422);
         }
 
         $uid = $this->liveUser->where('usid', $usid)->value('uid');
 
         if (!$uid === $login->id) {
-            return response()->json(['code' => '00506', 'message' => '不能关注自己'], 400);
+            return response()->json(['message' => '不能关注自己'], 400);
         }
 
         $follow = $this->userModel->find($uid);
@@ -109,7 +101,7 @@ class LiveOauthController extends BaseController
 
         if ($status) {
 
-            return response()->json(['code' => '00506', 'message' => '已关注过该用户'], 422);
+            return response()->json(['message' => '已关注过该用户'], 422);
         }
 
         return $login->getConnection()->transaction(function () use ($login, $follow) {
@@ -122,7 +114,7 @@ class LiveOauthController extends BaseController
                 'user' => $login,
             ]);
 
-            return response()->json(['code' => '00000', 'data' => ['is_follow' => 1]], 201);
+            return response()->json('', 201);
         });
     }
 
@@ -130,19 +122,18 @@ class LiveOauthController extends BaseController
      * 取消关注
      * @param Request
      */
-    public function dounfollow(Request $request)
+    public function unfollow(Request $request, string $usid)
     {
         $login = $request->user();
-        $usid = intval($request->input('usid'));
 
         if (!$usid) {
-            return response()->json(['code' => '00502', 'message' => '缺少被取消关注的用户'], 400);
+            return response()->json(['message' => '缺少被取消关注的用户'], 400);
         }
 
         $uid = $this->liveUser->where('usid', $usid)->value('uid');
 
         if (!$uid === $login->id) {
-            return response()->json(['code' => '00506', 'message' => '不能对自己取关'], 400);
+            return response()->json(['message' => '不能对自己取关'], 400);
         }
 
         $follow = $this->userModel->find($uid);
@@ -151,7 +142,7 @@ class LiveOauthController extends BaseController
 
         if (!$status) {
 
-            return response()->json(['code' => '00506', 'massage' => '你并没有关注该用户'], 422);
+            return response()->json(['message' => '你并没有关注该用户'], 422);
         }
 
         return $login->getConnection()->transaction(function () use ($login, $follow) {
@@ -159,7 +150,7 @@ class LiveOauthController extends BaseController
             $login->extra()->decrement('followings_count', 1);
             $follow->extra()->decrement('followers_count', 1);
 
-            return response()->json(['code' => '00000', 'data' => ['is_follow' => 0]], 201);
+            return response()->json('', 201);
         });
     }
 
@@ -183,7 +174,7 @@ class LiveOauthController extends BaseController
                 }
             ]);
 
-            return $user->followings;
+            return response()->json($user->followings, 200);
         }
 
         if ($type === 'followers') {
@@ -195,7 +186,7 @@ class LiveOauthController extends BaseController
                 }
             ]);
 
-            return $user->followers;
+            return response()->json($user->followers, 200);
         }
     }
 
@@ -282,7 +273,7 @@ class LiveOauthController extends BaseController
             $charge->save();
         });
 
-        return response()->json(['messge' => '打赏成功'], 201);
+        return response()->json(['message' => '兑换成功'], 201);
     }
 
 }

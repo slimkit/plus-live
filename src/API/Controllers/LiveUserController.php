@@ -35,7 +35,7 @@ class LiveUserController extends BaseController
         
 
         if (!$stream_server || !$usid_prex) {
-            return response()->json(['status' => 0, 'msg' => '请先设置直播服务器']);
+            return response()->json(['msg' => '请先设置直播服务器']);
         }
         $Service_User_Url = $stream_server . '/Users';
         $data = [];
@@ -60,10 +60,10 @@ class LiveUserController extends BaseController
 
             $model->save();
 
-            return response()->json(['status' => 1, 'msg' => '直播用户更新成功', 'data' => $model])->setStatusCode(201);
+            return response()->json(['msg' => '直播用户更新成功', 'data' => $model])->setStatusCode(201);
         } else {
 
-            return response()->json(['status' => 0, 'msg' => '注册直播用户失败'])->setStatusCode(500);
+            return response()->json(['msg' => '注册直播用户失败'])->setStatusCode(500);
         }
         
     }
@@ -79,23 +79,23 @@ class LiveUserController extends BaseController
     public function getInfo(Request $request, string $usid, LiveUserInfo $liveUser)
     {
         if (!$this->is_ZhiBoService($request)) {
-            return response()->json(['status' => 0, 'message' => '授权错误'])->setStatusCode(401);
+            return response()->json(['message' => '授权错误'])->setStatusCode(401);
         }
 
         $liveUser = $liveUser->where('usid', $usid)->with('user')->first();
         
         if (!$liveUser) {
-            return response()->json(['status' => 0, 'message' => '该用户未开通直播'])->setStatusCode(404);
+            return response()->json(['message' => '该用户未开通直播'])->setStatusCode(404);
         }
 
         // return response()->json($liveUser->user->extra)->setStatusCode(200);
-        return response()->json(['status' => 1, 'data' => [
+        return response()->json([
             'gold'          => $liveUser->user->wallet->balance,
             'zan_count'     => $liveUser->user->extra->live_zans_count,
             'zan_remain'    => $liveUser->user->extra->live_zans_remain,
             'uname'         => $liveUser->user->name,
             'sex'           => $liveUser->user->sex 
-        ]])->setStatusCode(200);
+        ])->setStatusCode(200);
     }
 
     /**
@@ -112,13 +112,13 @@ class LiveUserController extends BaseController
         $data = $request->input('data');
 
         if (!$this->is_ZhiBoService($request)) {
-            return response()->json(['status' => 0, 'message' => '授权错误'])->setStatusCode(401);
+            return response()->json(['message' => '授权错误'])->setStatusCode(401);
         }
 
         $liveUser = $liveUser->where('usid', $usid)->first();
 
         if (!$liveUser) {
-            return response()->json(['status' => 0, 'message' => '该用户未开通直播'])->setStatusCode(404);
+            return response()->json(['message' => '该用户未开通直播'])->setStatusCode(404);
         }
 
         $userExtra = $userExtra->where('user_id', $liveUser->uid)->first();
@@ -129,7 +129,7 @@ class LiveUserController extends BaseController
 
         $userExtra->update();
 
-        return response()->json(['status' => 1, 'data' => ['is_sync' => 1]])->setStatusCode(201);
+        return response()->json()->setStatusCode(201);
     }
 
     /**
@@ -144,12 +144,12 @@ class LiveUserController extends BaseController
     public function pushLive(Request $request, string $usid, LiveUserInfo $liveUser, User $user)
     {
         if (!$this->is_ZhiBoService($request)) {
-            return response()->json(['status' => 0, 'message' => '授权错误'])->setStatusCode(401);
+            return response()->json(['message' => '授权错误'])->setStatusCode(401);
         }
 
         $status = $request->input('status');
         if (!$usid) {
-            return response()->json(['status' => 0, 'message' => '参数传递错误'])->setStatusCode(400);
+            return response()->json(['message' => '参数传递错误'])->setStatusCode(400);
         }
 
         $liveUser = $liveUser->where('usid', $usid)->first();
