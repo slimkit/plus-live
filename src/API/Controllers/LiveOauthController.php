@@ -78,7 +78,7 @@ class LiveOauthController extends BaseController
             ];
         });
 
-        return response()->json(['code' => 00000, 'data' => $users], 200);
+        return response()->json(['code' => 00000, 'data' => $userFormate], 200);
     }
 
     public function followAction(Request $request)
