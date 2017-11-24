@@ -76,8 +76,10 @@ class LiveUserController extends BaseController
      * @param LiveUserInfo $liveUser
      * @return mixed
      */
-    public function getInfo(Request $request, string $usid, LiveUserInfo $liveUser)
+    public function getInfo(Request $request, LiveUserInfo $liveUser)
     {
+        $usid = $request->input('usid');
+
         if (!$this->is_ZhiBoService($request)) {
             return response()->json(['message' => '授权错误'])->setStatusCode(401);
         }
@@ -142,8 +144,10 @@ class LiveUserController extends BaseController
      * @param User $user
      * @return mixed
      */
-    public function pushLive(Request $request, string $usid, LiveUserInfo $liveUser, User $user)
+    public function pushLive(Request $request, LiveUserInfo $liveUser, User $user)
     {
+        $usid = $request->input('usid');
+
         if (!$this->is_ZhiBoService($request)) {
             return response()->json(['message' => '授权错误'])->setStatusCode(401);
         }

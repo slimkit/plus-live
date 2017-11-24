@@ -22,7 +22,7 @@ Route::group(['prefix' => 'api/v2'], function (RouteRegisterContract $api) {
         // $api->get('/', API\HomeController::class.'@rooms');
         
         // 获取某个用户授权
-        $api->get('/users/{usid}', API\LiveUserController::class.'@getUserData');
+        $api->post('/users', API\LiveUserController::class.'@getInfo');
 
         // 更新某个用户授权
         $api->post('/users/sync', API\LiveUserController::class.'@sync');
@@ -31,7 +31,7 @@ Route::group(['prefix' => 'api/v2'], function (RouteRegisterContract $api) {
         $api->post('/handleGift', API\LiveGiftController::class.'@handleGift');
 
         // 推送直播信息
-        $api->post('/pushLive/{usid}', API\LiveUserController::class.'@pushLive');
+        $api->post('/pushLive', API\LiveUserController::class.'@pushLive');
     });
 
     $api->group(['middleware' => 'auth:api'], function (RouteRegisterContract $api) {
