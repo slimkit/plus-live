@@ -56,7 +56,7 @@ class LiveOauthController extends BaseController
         $usids = explode(',', $request->input('usids'));
         // $login = $request->user('api');
 
-        $users = $this->liveUser->whereIn('usid', $usids)->get();
+        $users = $this->liveUser->whereIn('usid', $usids)->with('user')->get();
         $userFormate = $users->map( function ($user) {
             return [
                 'uid'               => $user->user->id,
@@ -66,15 +66,15 @@ class LiveOauthController extends BaseController
                 'intro'             => $user->user->bio,
                 'location'          => $user->user->location,
                 'reg_time'          => $user->user->created_at,
-                'is_verified'       => $user->user()->verified ? 1 : 0,
-                'gold'              => $user->user()->wallet() ? $user->user()->wallet->balance : 0,
-                'follow_count'      => $user->user()->extra() ? $user->user()->extra->followings_count : 0,
-                'fans_count'        => $user->user()->extra() ? $user->user()->extra->followers_count : 0,
-                'zan_count'         => $user->user()->extra() ? $user->user()->extra->live_zans_count : 0,
+                'is_verified'       => $user->user->verified ? 1 : 0,
+                'gold'              => $user->user->wallet ? $user->user->wallet->balance : 0,
+                'follow_count'      => $user->user->extra ? $user->user->extra->followings_count : 0,
+                'fans_count'        => $user->user->extra ? $user->user->extra->followers_count : 0,
+                'zan_count'         => $user->user->extra ? $user->user->extra->live_zans_count : 0,
                 'is_follow'         => false,
-                'cover'             => $user->user()->extra()->cover,
-                'avatar'            => $user->user()->avatar ?: '',
-                'live_time'         => $user->user()->extra() ? $user->user()->extra->live_time : 0,
+                'cover'             => $user->user->extra->cover,
+                'avatar'            => $user->user->avatar ?: '',
+                'live_time'         => $user->user->extra ? $user->user->extra->live_time : 0,
             ];
         });
 
