@@ -58,7 +58,7 @@ class LiveOauthController extends BaseController
 
         $users = $this->liveUser->whereIn('usid', $usids)->with('user')->get();
         $userFormate = $users->map( function ($user) {
-            dd($user);
+            $user->load('wallet');
             return [
                 'uid'               => $user->id,
                 'uname'             => $user->name,
