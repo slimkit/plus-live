@@ -54,9 +54,7 @@ class LiveOauthController extends BaseController
     public function getLiveUsers(Request $request)
     {
         $usids = explode(',', $request->input('usids'));
-        $login = $request->user('api');
-
-        return $login;
+        // $login = $request->user('api');
 
         $users = $this->liveUser->whereIn('usid', $usids)->with('user')->get();
         $userFormate = $users->map( function ($user) {
@@ -68,15 +66,15 @@ class LiveOauthController extends BaseController
                 'intro'             => $user->bio,
                 'location'          => $user->location,
                 'reg_time'          => $user->created_at,
-                'is_verified'       => $user->verified ? 1 : 0;
-                'gold'              => $user->wallet->balance ?: 0;
-                'follow_count'      => $user->extra->followings_count ?: 0;
-                'fans_count'        => $user->extra->followers_count ?: 0;
-                'zan_count'         => $user->extra->live_zans_count ?: 0;
-                'is_follow'         => $user->extra->cover;
-                'cover'             => $user->extra->cover;
-                'avatar'            => $user->avatar ?: '';
-                'live_time'         => $user->extra->live_time ?: 0;
+                'is_verified'       => $user->verified ? 1 : 0,
+                'gold'              => $user->wallet->balance ?: 0,
+                'follow_count'      => $user->extra->followings_count ?: 0,
+                'fans_count'        => $user->extra->followers_count ?: 0,
+                'zan_count'         => $user->extra->live_zans_count ?: 0,
+                'is_follow'         => false,
+                'cover'             => $user->extra->cover,
+                'avatar'            => $user->avatar ?: '',
+                'live_time'         => $user->extra->live_time ?: 0,
             ];
         });
 
@@ -224,15 +222,15 @@ class LiveOauthController extends BaseController
                 'intro'             => $u->bio,
                 'location'          => $u->location,
                 'reg_time'          => $u->created_at,
-                'is_verified'       => $u->verified ? 1 : 0;
-                'gold'              => $u->wallet->balance;
-                'follow_count'      => $u->extra->followings_count ?: 0;
-                'fans_count'        => $u->extra->followers_count ?: 0;
-                'zan_count'         => $u->extra->live_zans_count ?: 0;
-                'is_follow'         => $u->extra->cover;
-                'cover'             => $u->extra->cover;
-                'avatar'            => $u->avatar ?: '';
-                'live_time'         => $u->extra->live_time ?: 0;
+                'is_verified'       => $u->verified ? 1 : 0,
+                'gold'              => $u->wallet->balance,
+                'follow_count'      => $u->extra->followings_count ?: 0,
+                'fans_count'        => $u->extra->followers_count ?: 0,
+                'zan_count'         => $u->extra->live_zans_count ?: 0,
+                'is_follow'         => false,
+                'cover'             => $u->extra->cover,
+                'avatar'            => $u->avatar ?: '',
+                'live_time'         => $u->extra->live_time ?: 0,
             ];
         });
 
