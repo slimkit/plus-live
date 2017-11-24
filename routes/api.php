@@ -25,7 +25,7 @@ Route::group(['prefix' => 'api/v2'], function (RouteRegisterContract $api) {
         $api->get('/users/{usid}', API\LiveUserController::class.'@getUserData');
 
         // 更新某个用户授权
-        $api->post('/users/{usid}/sync', API\LiveUserController::class.'@syncData');
+        $api->post('/users/sync', API\LiveUserController::class.'@sync');
 
         // 赠送礼物
         $api->post('/handleGift', API\LiveGiftController::class.'@handleGift');

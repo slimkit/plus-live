@@ -107,9 +107,10 @@ class LiveUserController extends BaseController
      * @param UserExtra $userExtra
      * @return mixed
      */
-    public function sync(Request $request, string $usid, LiveUserInfo $liveUser, UserExtra $userExtra)
+    public function sync(Request $request, LiveUserInfo $liveUser, UserExtra $userExtra)
     {
         $data = $request->input('data');
+        $usid = $request->input('usid');
 
         if (!$this->is_ZhiBoService($request)) {
             return response()->json(['message' => '授权错误'])->setStatusCode(401);
