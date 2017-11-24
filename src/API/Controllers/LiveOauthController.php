@@ -57,7 +57,7 @@ class LiveOauthController extends BaseController
         $login = $request->user('api');
 
         $users = $this->liveUser->whereIn('usid', $usids)->with('user')->get();
-        $userFormate = $users->map( function ($user) {
+        $userFormate = $users->map( function ($user) use ($login) {
             return [
                 'uid'               => $user->user->id,
                 'uname'             => $user->user->name,
@@ -213,7 +213,7 @@ class LiveOauthController extends BaseController
             // return response()->json($user->followers, 200);
         }
 
-        $data = $data->map(function ($u) {
+        $data = $data->map(function ($u) use ($user) {
             return [
                 'uid'               => $u->id,
                 'uname'             => $u->name,
