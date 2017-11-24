@@ -19,7 +19,7 @@ Route::group(['prefix' => 'api/v2'], function (RouteRegisterContract $api) {
     $api->group(['prefix' => 'live'], function (RouteRegisterContract $api) {
         
         // 获取所有的直播列表
-        $api->get('/', API\HomeController::class.'@index');
+        $api->post('/', API\HomeController::class.'@index');
         
         // 获取某个用户授权
         $api->post('/users', API\LiveUserController::class.'@getInfo');
