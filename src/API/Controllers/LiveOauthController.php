@@ -42,7 +42,7 @@ class LiveOauthController extends BaseController
             $ticket = $result['data']['ticket'];
         }
 
-        return response()->json([$ticket], 200);
+        return response()->json($ticket, 200);
     }
 
     /**
