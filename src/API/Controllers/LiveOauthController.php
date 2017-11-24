@@ -58,6 +58,7 @@ class LiveOauthController extends BaseController
 
         $users = $this->liveUser->whereIn('usid', $usids)->with('user')->get();
         $userFormate = $users->map( function ($user) {
+            dd($user);
             return [
                 'uid'               => $user->id,
                 'uname'             => $user->name,
@@ -67,7 +68,7 @@ class LiveOauthController extends BaseController
                 'location'          => $user->location,
                 'reg_time'          => $user->created_at,
                 'is_verified'       => $user->verified ? 1 : 0,
-                'gold'              => $user->wallet ? $user->wallet->balance : 0,
+                'gold'              => $user->wallet ? $user->wallet()->balance : 0,
                 'follow_count'      => $user->extra ? $user->extra->followings_count : 0,
                 'fans_count'        => $user->extra ? $user->extra->followers_count : 0,
                 'zan_count'         => $user->extra ? $user->extra->live_zans_count : 0,
