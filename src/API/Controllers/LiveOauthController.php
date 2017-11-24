@@ -54,7 +54,7 @@ class LiveOauthController extends BaseController
     public function getLiveUsers(Request $request)
     {
         $usids = explode(',', $request->input('usids'));
-        // $login = $request->user('api');
+        $login = $request->user('api');
 
         $users = $this->liveUser->whereIn('usid', $usids)->with('user')->get();
         $userFormate = $users->map( function ($user) {
@@ -65,13 +65,13 @@ class LiveOauthController extends BaseController
                 'sex'               => $user->user->sex,
                 'intro'             => $user->user->bio,
                 'location'          => $user->user->location,
-                'reg_time'          => $user->user->created_at,
+                'reg_time'          => $user->user->created_at->toDateTimeString(),
                 'is_verified'       => $user->user->verified ? 1 : 0,
                 'gold'              => $user->user->wallet ? $user->user->wallet->balance : 0,
                 'follow_count'      => $user->user->extra ? $user->user->extra->followings_count : 0,
                 'fans_count'        => $user->user->extra ? $user->user->extra->followers_count : 0,
                 'zan_count'         => $user->user->extra ? $user->user->extra->live_zans_count : 0,
-                'is_follow'         => false,
+                'is_follow'         => $login->hasFollwing($user->user),
                 'cover'             => $user->user->extra->cover,
                 'avatar'            => $user->user->avatar ?: '',
                 'live_time'         => $user->user->extra ? $user->user->extra->live_time : 0,
@@ -183,7 +183,7 @@ class LiveOauthController extends BaseController
     {
         $type = $request->query('type', 'followers');
         $offset = $request->query('offset');
-        $user = $request->user();
+        $user = $request->user('api');
         $limit = $request->query('limit', 15);
         $data = [];
 
@@ -221,13 +221,13 @@ class LiveOauthController extends BaseController
                 'sex'               => $u->sex,
                 'intro'             => $u->bio,
                 'location'          => $u->location,
-                'reg_time'          => $u->created_at,
+                'reg_time'          => $u->created_at->toDateTimeString(),
                 'is_verified'       => $u->verified ? 1 : 0,
                 'gold'              => $u->wallet ? $this->wallet->balance : 0,
                 'follow_count'      => $u->extra ? $u->extra->followings_count : 0,
                 'fans_count'        => $u->extra ? $u->extra->followers_count : 0,
                 'zan_count'         => $u->extra ? $u->extra->live_zans_count : 0,
-                'is_follow'         => false,
+                'is_follow'         => $user->hasFollwing($u),
                 'cover'             => $u->extra->cover,
                 'avatar'            => $u->avatar ?: '',
                 'live_time'         => $u->extra ? $u->extra->live_time : 0,
