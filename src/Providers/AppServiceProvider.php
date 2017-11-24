@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Publish config.
         $this->publishes([
-            $this->app->make('path.plus-live.config').'/plus-live.php' => $this->app->configPath('plus-live.php'),
+            $this->app->make('path.plus-live.config').'/live.php' => $this->app->configPath('live.php'),
         ], 'config');
     }
 

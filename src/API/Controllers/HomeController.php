@@ -29,7 +29,9 @@ class HomeController
                 
                 return $app->call([app(LiveUserController::class), 'sync']);
                 break;
-
+            case 'ZB_User_Get_Info':
+                return $app->call([app(LiveOauthController::class), 'getLiveUsers']);
+                break;
             // 获取直播凭据
             case 'ZB_User_Get_ticket':
                 
