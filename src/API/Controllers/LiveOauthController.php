@@ -68,13 +68,13 @@ class LiveOauthController extends BaseController
                 'reg_time'          => $user->created_at,
                 'is_verified'       => $user->verified ? 1 : 0,
                 'gold'              => $user->wallet ? $user->wallet->balance : 0,
-                'follow_count'      => $user->extra->followings_count ?: 0,
-                'fans_count'        => $user->extra->followers_count ?: 0,
-                'zan_count'         => $user->extra->live_zans_count ?: 0,
+                'follow_count'      => $user->extra ? $user->extra->followings_count : 0,
+                'fans_count'        => $user->extra ? $user->extra->followers_count : 0,
+                'zan_count'         => $user->extra ? $user->extra->live_zans_count : 0,
                 'is_follow'         => false,
                 'cover'             => $user->extra->cover,
                 'avatar'            => $user->avatar ?: '',
-                'live_time'         => $user->extra->live_time ?: 0,
+                'live_time'         => $user->extra ? $user->extra->live_time : 0,
             ];
         });
 
@@ -224,13 +224,13 @@ class LiveOauthController extends BaseController
                 'reg_time'          => $u->created_at,
                 'is_verified'       => $u->verified ? 1 : 0,
                 'gold'              => $u->wallet ? $this->wallet->balance : 0,
-                'follow_count'      => $u->extra->followings_count ?: 0,
-                'fans_count'        => $u->extra->followers_count ?: 0,
-                'zan_count'         => $u->extra->live_zans_count ?: 0,
+                'follow_count'      => $u->extra ? $u->extra->followings_count : 0,
+                'fans_count'        => $u->extra ? $u->extra->followers_count : 0,
+                'zan_count'         => $u->extra ? $u->extra->live_zans_count : 0,
                 'is_follow'         => false,
                 'cover'             => $u->extra->cover,
                 'avatar'            => $u->avatar ?: '',
-                'live_time'         => $u->extra->live_time ?: 0,
+                'live_time'         => $u->extra ? $u->extra->live_time : 0,
             ];
         });
 
