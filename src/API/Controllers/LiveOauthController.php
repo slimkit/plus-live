@@ -56,26 +56,25 @@ class LiveOauthController extends BaseController
         $usids = explode(',', $request->input('usids'));
         // $login = $request->user('api');
 
-        $users = $this->liveUser->whereIn('usid', $usids)->with('user')->get();
+        $users = $this->liveUser->whereIn('usid', $usids)->get();
         $userFormate = $users->map( function ($user) {
-            $user->load('wallet');
             return [
-                'uid'               => $user->id,
-                'uname'             => $user->name,
-                'phone'             => $user->phone,
-                'sex'               => $user->sex,
-                'intro'             => $user->bio,
-                'location'          => $user->location,
-                'reg_time'          => $user->created_at,
-                'is_verified'       => $user->verified ? 1 : 0,
-                'gold'              => $user->wallet ? $user->wallet()->balance : 0,
-                'follow_count'      => $user->extra ? $user->extra->followings_count : 0,
-                'fans_count'        => $user->extra ? $user->extra->followers_count : 0,
-                'zan_count'         => $user->extra ? $user->extra->live_zans_count : 0,
+                'uid'               => $user->user()->id,
+                'uname'             => $user->user()->name,
+                'phone'             => $user->user()->phone,
+                'sex'               => $user->user()->sex,
+                'intro'             => $user->user()->bio,
+                'location'          => $user->user()->location,
+                'reg_time'          => $user->user()->created_at,
+                'is_verified'       => $user->user()->verified ? 1 : 0,
+                'gold'              => $user->user()->wallet ? $user->user()->wallet()->balance : 0,
+                'follow_count'      => $user->user()->extra ? $user->user()->extra->followings_count : 0,
+                'fans_count'        => $user->user()->extra ? $user->user()->extra->followers_count : 0,
+                'zan_count'         => $user->user()->extra ? $user->user()->extra->live_zans_count : 0,
                 'is_follow'         => false,
-                'cover'             => $user->extra->cover,
-                'avatar'            => $user->avatar ?: '',
-                'live_time'         => $user->extra ? $user->extra->live_time : 0,
+                'cover'             => $user->user()->extra->cover,
+                'avatar'            => $user->user()->avatar ?: '',
+                'live_time'         => $user->user()->extra ? $user->user()->extra->live_time : 0,
             ];
         });
 
