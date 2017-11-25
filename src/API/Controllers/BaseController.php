@@ -110,7 +110,6 @@ class BaseController extends Controller
     public function registerOther($data)
     {   
         $model = new LiveUserInfo();
-        dd($data);
         $stream_server = $this->setting['stream_server'] ?? '';
         $Service_User_Url = $stream_server . '/Users';
         $usid_prex = $this->setting['usid_prex'] ?? '';
