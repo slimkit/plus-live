@@ -16,7 +16,6 @@ class BaseController extends Controller
     public function __construct()
     {
         $this->setting = config('live');
-
     }
 
     public function isUrl ($urs = '') 
@@ -109,6 +108,7 @@ class BaseController extends Controller
 
     public function registerOther($data)
     {   
+        dd($this->setting);
         $model = new LiveUserInfo();
         $stream_server = $this->setting['stream_server'] ?: '';
         $Service_User_Url = $stream_server . '/Users';
