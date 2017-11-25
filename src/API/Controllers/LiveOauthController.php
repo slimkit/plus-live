@@ -79,7 +79,7 @@ class LiveOauthController extends BaseController
             ];
         });
 
-        return response()->json(['code' => 00000, 'data' => $userFormate], 200);
+        return response()->json(['code' => '00000', 'data' => $userFormate], 200);
     }
 
     public function followAction(Request $request)
@@ -236,7 +236,7 @@ class LiveOauthController extends BaseController
             ];
         });
 
-        return response()->json(['code' => 00000, 'data' => $data], 200);
+        return response()->json(['code' => '00000', 'data' => $data], 200);
     }
 
     // /**
