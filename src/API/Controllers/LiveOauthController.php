@@ -219,7 +219,7 @@ class LiveOauthController extends BaseController
         $data = $data->map(function ($u) use ($user, $model, $app) {
             $usid = $model->newQuery()->where('uid', $u->id)->value('usid');
             if (!$usid) {
-                $result = $app->call([app(LiveUserController::class), 'registerOther'], ['id' => $u->id, 'name' => $u->name, 'sex' => $u->sex]);
+                $result = $app->call([app(LiveUserController::class), 'registerOther'], ['id' => $u->id, 'uname' => $u->name, 'sex' => $u->sex]);
                 dd($result);
             }
             return [

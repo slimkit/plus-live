@@ -25,17 +25,17 @@ class LiveUserController extends BaseController
         $Service_User_Url = $stream_server . '/Users';
         $usid_prex = $this->setting['usid_prex'] ?? '';
         $curl_header = $this->setting['curl_header'] ?? '';
-
+        $data['usid'] = $usid_prex.$data['id']
         $client = new Client();
         $response = $client->request('post', $Service_User_Url, ['form_params' => $data, 'headers' => $curl_header]);
 
         $response = json_decode(($response->getBody()->getContents()), true);
 
         if ($response['code'] === 1) {
-            $model->uid = $data->id;
-            $model->usid = $usid_prex . $data->id;
-            $model->sex = $data->sex;
-            $model->uname = $data->name;
+            $model->uid = $data['id'];
+            $model->usid = $usid_prex . $data['id'];
+            $model->sex = $data['sex'];
+            $model->uname = $data['uname'];
             $model->ticket = $response['data']['ticket'];
 
             $model->save();
