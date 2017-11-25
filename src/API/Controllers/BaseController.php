@@ -104,4 +104,34 @@ class BaseController extends Controller
         return base64_decode($tmp);
     }
 
+    public function registerOther($data)
+    {   
+        $model = new LiveUserInfo();
+        dd($data);
+        $stream_server = $this->setting['stream_server'] ?? '';
+        $Service_User_Url = $stream_server . '/Users';
+        $usid_prex = $this->setting['usid_prex'] ?? '';
+        $curl_header = $this->setting['curl_header'] ?? '';
+        $data['usid'] = $usid_prex.$data['id'];
+        $client = new Client();
+
+        $response = $client->request('post', $Service_User_Url, ['form_params' => $data, 'headers' => $curl_header]);
+
+        $response = json_decode(($response->getBody()->getContents()), true);
+
+        if ($response['code'] === 1) {
+            $model->uid = $data['id'];
+            $model->usid = $usid_prex . $data['id'];
+            $model->sex = $data['sex'];
+            $model->uname = $data['uname'];
+            $model->ticket = $response['data']['ticket'];
+
+            $model->save();
+
+            return $model;
+        }
+
+        return false;
+    }
+
 }

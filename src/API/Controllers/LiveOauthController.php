@@ -188,7 +188,7 @@ class LiveOauthController extends BaseController
         $limit = $request->input('limit', 15);
         $data = [];
         $uid = $model->where('usid', $usid)->value('uid');
-
+        
         $user = $userModel->find($uid);
         if ($type === 'follow') {
             $user->load([
@@ -219,7 +219,7 @@ class LiveOauthController extends BaseController
         $data = $data->map(function ($u) use ($user, $model, $app) {
             $usid = $model->newQuery()->where('uid', $u->id)->value('usid');
             if (!$usid) {
-                $result = $app->call([app(LiveUserController::class), 'registerOther', ['id' => $u->id, 'uname' => $u->name, 'sex' => $u->sex]]);
+                $result = $this->registerOther(['id' => $u->id, 'uname' => $u->name, 'sex' => $u->sex]);
                 dd($result);
             }
             return [
