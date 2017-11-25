@@ -17,6 +17,7 @@ class LiveOauthController extends BaseController
     public function __construct (LiveUserInfo $liveUser, User $userModel) {
         $this->liveUser = $liveUser;
         $this->userModel = $userModel;
+        $this->setting = config('live', []);
     }
 
     /**
@@ -219,7 +220,7 @@ class LiveOauthController extends BaseController
         $data = $data->map(function ($u) use ($user, $model, $app) {
             $usid = $model->newQuery()->where('uid', $u->id)->value('usid');
             if (!$usid) {
-                $result = $this->registerOther(['id' => $u->id, 'uname' => $u->name, 'sex' => $u->sex]);
+                $result = $this->registerOther(['id' => $u->id, 'uname' => $u->name, 'sex' => $u->sex], $this->setting);
                 if ($result) {
                     $usid = 'ts_plus_' . $u->id;
                 } else {
