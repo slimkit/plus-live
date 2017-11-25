@@ -116,7 +116,7 @@ class BaseController extends Controller
         $curl_header = $this->setting['curl_header'] ?? '';
         $data['usid'] = $usid_prex.$data['id'];
         $client = new Client();
-
+        dd($curl_header);
         $response = $client->request('post', $Service_User_Url, ['form_params' => $data, 'headers' => $curl_header]);
 
         $response = json_decode(($response->getBody()->getContents()), true);
