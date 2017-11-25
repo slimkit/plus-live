@@ -19,6 +19,32 @@ class LiveUserController extends BaseController
         $this->setting = config('live', []);
     }
 
+    public function registerOther($data = [], LiveUserInfo $model)
+    {
+        $stream_server = $this->setting['stream_server'] ?? '';
+        $Service_User_Url = $stream_server . '/Users';
+        $usid_prex = $this->setting['usid_prex'] ?? '';
+
+        $client = new Client();
+        $response = $client->request('post', $Service_User_Url, ['form_params' => $data, 'headers' => $curl_header]);
+
+        $response = json_decode(($response->getBody()->getContents()), true);
+
+        if ($response['code'] === 1) {
+            $model->uid = $data->id;
+            $model->usid = $usid_prex . $data->id;
+            $model->sex = $data->sex;
+            $model->uname = $data->name;
+            $model->ticket = $response['data']['ticket'];
+
+            $model->save();
+
+            return $model;
+        }
+
+        return false;
+    }
+
     /**
      * 注册直播服务端账户
      * @param  Request
