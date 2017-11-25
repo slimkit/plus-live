@@ -59,7 +59,7 @@ class LiveOauthController extends BaseController
         $login = $request->user('api');
 
         $users = $this->liveUser->whereIn('usid', $usids)->with('user')->get();
-        $userFormate = $users->map( function ($user) use ($login) {
+        $userFormate = $users->map( function ($user) use ($login, $model) {
             $usid = $model->newQuery()->where('uid', $user->user->id)->value('usid');
             if (!$usid) {
                 $result = $this->registerOther(['id' => $user->user->id, 'uname' => $user->user->name, 'sex' => $user->user->sex], $this->setting);
