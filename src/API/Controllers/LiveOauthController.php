@@ -53,7 +53,7 @@ class LiveOauthController extends BaseController
      * @param LiveUserInfo
      * @param User
      */
-    public function getLiveUsers(Request $request)
+    public function getLiveUsers(Request $request, LiveUserInfo $model)
     {
         $usids = explode(',', $request->input('usid'));
         $login = $request->user('api');
