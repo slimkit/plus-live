@@ -53,7 +53,7 @@ class LiveOauthController extends BaseController
      */
     public function getLiveUsers(Request $request)
     {
-        $usids = explode(',', $request->input('usids'));
+        $usids = explode(',', $request->input('usid'));
         $login = $request->user('api');
 
         $users = $this->liveUser->whereIn('usid', $usids)->with('user')->get();
