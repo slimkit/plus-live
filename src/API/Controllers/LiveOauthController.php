@@ -193,7 +193,7 @@ class LiveOauthController extends BaseController
         if ($type === 'follow') {
             $user->load([
                 'followings' => function ($query) use ($offset, $limit) {
-                    return $query->when($offset, function ($query) use ($offset) {
+                    return $query->with('wallet')->when($offset, function ($query) use ($offset) {
                         return $query->offset($offset);
                     })->limit($limit);
                 }
@@ -206,7 +206,7 @@ class LiveOauthController extends BaseController
         if ($type === 'following') {
             $user->load([
                 'followers' => function ($query) use ($offset, $limit) {
-                    return $query->when($offset, function ($query) use ($offset) {
+                    return $query->with('wallet')->when($offset, function ($query) use ($offset) {
                         return $query->offset($offset);
                     })->limit($limit);
                 }
