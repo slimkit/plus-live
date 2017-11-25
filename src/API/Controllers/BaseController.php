@@ -108,7 +108,6 @@ class BaseController extends Controller
 
     public function registerOther($data = [], $config = [])
     {   
-        dd($config);
         $model = new LiveUserInfo();
         $stream_server = $config['stream_server'] ?: '';
         $Service_User_Url = $stream_server . '/Users';
