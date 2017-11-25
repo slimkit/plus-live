@@ -180,15 +180,18 @@ class LiveOauthController extends BaseController
      * 获取用户关注列表
      * @param Request
      */
-    public function getUsers(Request $request)
-    {
-        $type = $request->query('type', 'followers');
+    public function getUsers(Request $request, LiveUserInfo $model, User $userModel)
+    {   
+        $usid = $request->
+        $type = $request->query('type', 'follow');
         $offset = $request->query('offset');
-        $user = $request->user('api');
+        // $user = $request->user('api');
         $limit = $request->query('limit', 15);
         $data = [];
+        $uid = $model->where('usid', $usid)->value('uid');
 
-        if ($type === 'fans') {
+        $user = $userModel->find($uid);
+        if ($type === 'follow') {
             $user->load([
                 'followings' => function ($query) use ($offset, $limit) {
                     return $query->when($offset, function ($query) use ($offset) {
@@ -201,7 +204,7 @@ class LiveOauthController extends BaseController
             $data = $user->followings;
         }
 
-        if ($type === 'followers') {
+        if ($type === 'following') {
             $user->load([
                 'followers' => function ($query) use ($offset, $limit) {
                     return $query->when($offset, function ($query) use ($offset) {
