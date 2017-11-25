@@ -217,7 +217,6 @@ class LiveOauthController extends BaseController
         }
 
         $data = $data->map(function ($u) use ($user) {
-            dd($user);
             return [
                 'uid'               => (string) $u->id,
                 'uname'             => $u->name,
