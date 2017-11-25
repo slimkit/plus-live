@@ -25,7 +25,7 @@ class LiveUserController extends BaseController
         $Service_User_Url = $stream_server . '/Users';
         $usid_prex = $this->setting['usid_prex'] ?? '';
         $curl_header = $this->setting['curl_header'] ?? '';
-        $data['usid'] = $usid_prex.$data['id']
+        $data['usid'] = $usid_prex.$data['id'];
         $client = new Client();
         $response = $client->request('post', $Service_User_Url, ['form_params' => $data, 'headers' => $curl_header]);
 
