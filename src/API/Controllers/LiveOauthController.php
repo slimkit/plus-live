@@ -217,22 +217,24 @@ class LiveOauthController extends BaseController
 
         $data = $data->map(function ($u) use ($user) {
             return [
-                'uid'               => (string) $u->id,
-                'uname'             => $u->name,
-                'sex'               => $u->sex,
-                'intro'             => $u->bio ?: '',
-                'location'          => $u->location ?: '',
-                'reg_time'          => $u->created_at->toDateTimeString(),
-                'is_verified'       => $u->verified ? 1 : 0,
-                'gold'              => $u->wallet ? $u->wallet->balance : 0,
-                'follow_count'      => $u->extra ? $u->extra->followings_count : 0,
-                'fans_count'        => $u->extra ? $u->extra->followers_count : 0,
-                'zan_count'         => $u->extra ? $u->extra->live_zans_count : 0,
-                'is_follow'         => $user ? intval($user->hasFollwing($u)) : 0,
-                'cover'             => $u->extra->cover ? (object) [ '0' => $u->extra->cover ] : [],
-                'avatar'            =>  $u->avatar ? (object) [ '0' => $u->avatar ] : (object) [],
-                'live_time'         => $u->extra ? $u->extra->live_time : 0,
-                'usid'              => 'ts_plus_' . $u->id
+                'user' => [
+                    'uid'               => (string) $u->id,
+                    'uname'             => $u->name,
+                    'sex'               => $u->sex,
+                    'intro'             => $u->bio ?: '',
+                    'location'          => $u->location ?: '',
+                    'reg_time'          => $u->created_at->toDateTimeString(),
+                    'is_verified'       => $u->verified ? 1 : 0,
+                    'gold'              => $u->wallet ? $u->wallet->balance : 0,
+                    'follow_count'      => $u->extra ? $u->extra->followings_count : 0,
+                    'fans_count'        => $u->extra ? $u->extra->followers_count : 0,
+                    'zan_count'         => $u->extra ? $u->extra->live_zans_count : 0,
+                    'cover'             => $u->extra->cover ? (object) [ '0' => $u->extra->cover ] : (object) [],
+                    'avatar'            =>  $u->avatar ? (object) [ '0' => $u->avatar ] : (object) [],
+                    'live_time'         => $u->extra ? $u->extra->live_time : 0,
+                    'usid'              => 'ts_plus_' . $u->id
+                ],
+                'is_follow'             => intval($user->hasFollwing($u)) ?: 0
             ];
         });
 
