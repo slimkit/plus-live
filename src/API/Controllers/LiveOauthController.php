@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Zhiyi\Plus\Auth\JWTAuthToken;
 use Zhiyi\Plus\Models\WalletCharge;
 use Slimkit\PlusLive\Models\LiveUserInfo;
+use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 
 class LiveOauthController extends BaseController
 {
@@ -179,7 +180,7 @@ class LiveOauthController extends BaseController
      * 获取用户关注列表
      * @param Request
      */
-    public function getUsers(Request $request, LiveUserInfo $model, User $userModel)
+    public function getUsers(Request $request, LiveUserInfo $model, User $userModel, ApplicationContract $app)
     {   
         $usid = $request->input('usid');
         $type = $request->input('type', 'follow');
@@ -215,7 +216,7 @@ class LiveOauthController extends BaseController
             // return response()->json($user->followers, 200);
         }
 
-        $data = $data->map(function ($u) use ($user, $model) {
+        $data = $data->map(function ($u) use ($user, $model, $app) {
             $usid = $model->newQuery()->where('uid', $u->id)->value('usid');
             if (!$usid) {
                 $result = $app->call([app(LiveUserController::class), 'registerOther'], ['id' => $u->id, 'name' => $u->name, 'sex' => $u->sex]);
