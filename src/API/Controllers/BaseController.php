@@ -2,6 +2,7 @@
  
 namespace Slimkit\PlusLive\API\Controllers;
 
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Slimkit\PlusLive\Models\LiveUserInfo;
 use Zhiyi\Plus\Http\Controllers\Controller;

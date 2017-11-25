@@ -188,7 +188,7 @@ class LiveOauthController extends BaseController
         $limit = $request->input('limit', 15);
         $data = [];
         $uid = $model->where('usid', $usid)->value('uid');
-        
+
         $user = $userModel->find($uid);
         if ($type === 'follow') {
             $user->load([
@@ -220,7 +220,11 @@ class LiveOauthController extends BaseController
             $usid = $model->newQuery()->where('uid', $u->id)->value('usid');
             if (!$usid) {
                 $result = $this->registerOther(['id' => $u->id, 'uname' => $u->name, 'sex' => $u->sex]);
-                dd($result);
+                if ($result) {
+                    $usid = 'ts_plus_' . $u->id;
+                } else {
+                    $usid = '';
+                }
             }
             return [
                 'user' => [
@@ -238,7 +242,7 @@ class LiveOauthController extends BaseController
                     'cover'             => $u->extra->cover ? (object) [ '0' => $u->extra->cover ] : (object) [],
                     'avatar'            =>  $u->avatar ? (object) [ '0' => $u->avatar ] : (object) [],
                     'live_time'         => $u->extra ? $u->extra->live_time : 0,
-                    'usid'              => 'ts_plus_' . $u->id
+                    'usid'              => $usid
                 ],
                 'is_follow'             => intval($user->hasFollwing($u)) ?: 0
             ];
