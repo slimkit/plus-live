@@ -3,7 +3,9 @@
 namespace Slimkit\PlusLive\API\Controllers;
 
 use Illuminate\Http\Request;
+use Slimkit\PlusLive\Models\LiveUserInfo;
 use Zhiyi\Plus\Http\Controllers\Controller;
+
 
 class BaseController extends Controller 
 {
