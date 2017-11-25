@@ -182,11 +182,10 @@ class LiveOauthController extends BaseController
      */
     public function getUsers(Request $request, LiveUserInfo $model, User $userModel)
     {   
-        $usid = $request->
-        $type = $request->query('type', 'follow');
-        $offset = $request->query('offset');
-        // $user = $request->user('api');
-        $limit = $request->query('limit', 15);
+        $usid = $request->input('usid');
+        $type = $request->input('type', 'follow');
+        $offset = $request->input('offset');
+        $limit = $request->input('limit', 15);
         $data = [];
         $uid = $model->where('usid', $usid)->value('uid');
 
