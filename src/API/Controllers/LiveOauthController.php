@@ -72,8 +72,8 @@ class LiveOauthController extends BaseController
                 'fans_count'        => $user->user->extra ? $user->user->extra->followers_count : 0,
                 'zan_count'         => $user->user->extra ? $user->user->extra->live_zans_count : 0,
                 'is_follow'         => $login ? intval($login->hasFollwing($user->user)) : 0,
-                'cover'             => (object) [ '0' => $user->user->extra->cover ?: '' ],
-                'avatar'            => (object) [ '0' => $user->user->avatar ?: '' ],
+                'cover'             => $user->user->extra->cover ? (object) [ '0' => $user->user->extra->cover] : (object) [],
+                'avatar'            => $user->user->avatar ? (object) [ '0' => $user->user->avatar ] : (object) [],
                 'live_time'         => $user->user->extra ? $user->user->extra->live_time : 0,
                 'usid'              => 'ts_plus_' . $user->user->id
             ];
@@ -229,8 +229,8 @@ class LiveOauthController extends BaseController
                 'fans_count'        => $u->extra ? $u->extra->followers_count : 0,
                 'zan_count'         => $u->extra ? $u->extra->live_zans_count : 0,
                 'is_follow'         => $user ? intval($user->hasFollwing($u)) : 0,
-                'cover'             => (object) [ '0' => $u->extra->cover ?: '' ],
-                'avatar'            => (object) [ '0' => $u->avatar ?: '' ],
+                'cover'             => $u->extra->cover ? (object) [ '0' => $u->extra->cover ] : [],
+                'avatar'            =>  $u->avatar ? (object) [ '0' => $u->avatar ] : (object) [],
                 'live_time'         => $u->extra ? $u->extra->live_time : 0,
                 'usid'              => 'ts_plus_' . $u->id
             ];
