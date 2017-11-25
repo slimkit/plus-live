@@ -225,7 +225,7 @@ class LiveOauthController extends BaseController
                 'location'          => $u->location,
                 'reg_time'          => $u->created_at->toDateTimeString(),
                 'is_verified'       => $u->verified ? 1 : 0,
-                'gold'              => $u->wallet ? $this->wallet->balance : 0,
+                'gold'              => $u->wallet ? $u->wallet->balance : 0,
                 'follow_count'      => $u->extra ? $u->extra->followings_count : 0,
                 'fans_count'        => $u->extra ? $u->extra->followers_count : 0,
                 'zan_count'         => $u->extra ? $u->extra->live_zans_count : 0,
