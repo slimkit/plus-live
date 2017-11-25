@@ -59,9 +59,9 @@ class LiveOauthController extends BaseController
         $users = $this->liveUser->whereIn('usid', $usids)->with('user')->get();
         $userFormate = $users->map( function ($user) use ($login) {
             return [
-                'uid'               => $user->user->id,
+                'uid'               => (string) $user->user->id,
                 'uname'             => $user->user->name,
-                'phone'             => $user->user->phone,
+                // 'phone'             => $user->user->phone,
                 'sex'               => $user->user->sex,
                 'intro'             => $user->user->bio,
                 'location'          => $user->user->location,
@@ -75,6 +75,7 @@ class LiveOauthController extends BaseController
                 'cover'             => $user->user->extra->cover ?: '',
                 'avatar'            => $user->user->avatar ?: '',
                 'live_time'         => $user->user->extra ? $user->user->extra->live_time : 0,
+                'usid'              => 'ts_plus_' . $user->user->id
             ];
         });
 
@@ -215,9 +216,9 @@ class LiveOauthController extends BaseController
 
         $data = $data->map(function ($u) use ($user) {
             return [
-                'uid'               => $u->id,
+                'uid'               => (string) $u->id,
                 'uname'             => $u->name,
-                'phone'             => $u->phone,
+                // 'phone'             => $u->phone,
                 'sex'               => $u->sex,
                 'intro'             => $u->bio,
                 'location'          => $u->location,
@@ -231,6 +232,7 @@ class LiveOauthController extends BaseController
                 'cover'             => $u->extra->cover ?: '',
                 'avatar'            => $u->avatar ?: '',
                 'live_time'         => $u->extra ? $u->extra->live_time : 0,
+                'usid'              => 'ts_plus_' . $u->id
             ];
         });
 
