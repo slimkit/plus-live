@@ -229,8 +229,8 @@ class LiveOauthController extends BaseController
                 'fans_count'        => $u->extra ? $u->extra->followers_count : 0,
                 'zan_count'         => $u->extra ? $u->extra->live_zans_count : 0,
                 'is_follow'         => $user ? intval($user->hasFollwing($u)) : 0,
-                'cover'             => [ '0' => $u->extra->cover ?: '' ],
-                'avatar'            => [ '0' => $u->avatar ?: '' ],
+                'cover'             => (object) [ '0' => $u->extra->cover ?: '' ],
+                'avatar'            => (object) [ '0' => $u->avatar ?: '' ],
                 'live_time'         => $u->extra ? $u->extra->live_time : 0,
                 'usid'              => 'ts_plus_' . $u->id
             ];
