@@ -114,13 +114,15 @@ class LiveOauthController extends BaseController
      * @param  Request $request [description]
      * @return [type]           [description]
      */
-    public function getFollowStatus(Request $request, LiveUserInfo $model)
+    public function getFollowStatus(Request $request)
     {   
         $user = $request->user('auth:api');
         if (!$user) {
 
             return response()->json(['message' => '请先登录'], 401);
         }
+
+        $model = new LiveUserInfo();
 
         $usid = $request->input('usid');
 
