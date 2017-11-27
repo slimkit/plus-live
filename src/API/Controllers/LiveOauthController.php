@@ -205,7 +205,7 @@ class LiveOauthController extends BaseController
                 'followings' => function ($query) use ($offset, $limit) {
                     return $query->with('wallet')->when($offset, function ($query) use ($offset) {
                         return $query->offset($offset);
-                    })->limit($limit);
+                    })->paginate($limit);
                 }
             ]);
 
@@ -218,7 +218,7 @@ class LiveOauthController extends BaseController
                 'followers' => function ($query) use ($offset, $limit) {
                     return $query->with('wallet')->when($offset, function ($query) use ($offset) {
                         return $query->offset($offset);
-                    })->limit($limit);
+                    })->paginate($limit);
                 }
             ]);
 
