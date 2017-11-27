@@ -139,10 +139,10 @@ class LiveOauthController extends BaseController
      * 关注用户
      * @param Request
      */
-    public function follow(Request $request, string $usid)
+    public function follow(Request $request)
     {
         $login = $request->user('api');
-
+        $usid = $request->input('usid');
         if (!$login) {
             return response()->json(['message' => '请先登录'], 401);
         }
@@ -184,10 +184,10 @@ class LiveOauthController extends BaseController
      * 取消关注
      * @param Request
      */
-    public function unfollow(Request $request, string $usid)
+    public function unfollow(Request $request)
     {
         $login = $request->user('api');
-
+        $usid = $request->input('usid');
         if (!$usid) {
             return response()->json(['message' => '缺少被取消关注的用户'], 400);
         }
