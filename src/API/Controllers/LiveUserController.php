@@ -6,7 +6,8 @@ use GuzzleHttp\Client;
 use Zhiyi\Plus\Models\User;
 use Illuminate\Http\Request;
 use Zhiyi\Plus\Models\UserExtra;
-use Zhiyi\Plus\Jobs\PushMessage;
+// use Zhiyi\Plus\Jobs\PushMessage;
+use Zhiyi\Plus\Service\Push;
 use GuzzleHttp\Psr7\Request as GRequest;
 use Slimkit\PlusLive\Models\LiveUserInfo;
 
@@ -132,7 +133,7 @@ class LiveUserController extends BaseController
 
         $userExtra->update();
 
-        return response()->json()->setStatusCode(201);
+        return response()->json(['status' => 1, 'data' => ['is_sync' => 1]])->setStatusCode(201);
     }
 
     /**
