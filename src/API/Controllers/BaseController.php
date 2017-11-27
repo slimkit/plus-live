@@ -46,6 +46,7 @@ class BaseController extends Controller
     // 判断是否是合法请求
     public function is_ZhiboService (Request $request)
     {
+        file_put_contents('/home/wwwroot/thinksns-plus/sss', json_encode($requ)->header());
         if ($this->setting['header']['Auth-Appid'] === $request->header('HTTP_AUTH_APPID')) {
             return true;
         }
