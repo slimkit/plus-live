@@ -96,6 +96,11 @@ class LiveOauthController extends BaseController
     {
         $action = $request->input('action');
         $user = $request->user();
+        if (!$user) {
+
+            return response()->json(['message' => '请先登录'], 401);
+        }
+
         switch ($action) {
             case 1:
                 return $this->follow($request);
@@ -104,9 +109,27 @@ class LiveOauthController extends BaseController
                 return $this->unfollow($request);
                 break;
             default:
-                return response()->json($user->hasFollwing($request->input('usid')), 200);
+                return $this->getFollowStatus($request);
                 break;
         }
+    }
+
+    /**
+     * 查询关注状态
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function getFollowStatus(Request $request, LiveUserInfo $model)
+    {
+        $usid = $request->input('usid');
+
+        if (!$usid) {
+            return response()->json(['message' => "缺少需要查询的用户"], 422);
+        }
+
+        $uid = $model->where('usid', $usid)->value('uid');
+
+        return response()->json(['code' => '00000', 'data' => ['is_follow' => $user->hasFollwing($uid)]], 200);
     }
 
     /**
@@ -123,7 +146,7 @@ class LiveOauthController extends BaseController
 
         $uid = $this->liveUser->where('usid', $usid)->value('uid');
 
-        if (!$uid === $login->id) {
+        if ($uid === $login->id) {
             return response()->json(['message' => '不能关注自己'], 400);
         }
 
