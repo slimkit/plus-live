@@ -95,11 +95,6 @@ class LiveOauthController extends BaseController
     public function followAction(Request $request)
     {
         $action = $request->input('action');
-        $user = $request->user();
-        if (!$user) {
-
-            return response()->json(['message' => '请先登录'], 401);
-        }
 
         switch ($action) {
             case 1:
@@ -120,7 +115,13 @@ class LiveOauthController extends BaseController
      * @return [type]           [description]
      */
     public function getFollowStatus(Request $request, LiveUserInfo $model)
-    {
+    {   
+        $user = $request->user('auth:api');
+        if (!$user) {
+
+            return response()->json(['message' => '请先登录'], 401);
+        }
+
         $usid = $request->input('usid');
 
         if (!$usid) {
@@ -138,7 +139,11 @@ class LiveOauthController extends BaseController
      */
     public function follow(Request $request, string $usid)
     {
-        $login = $request->user();
+        $login = $request->user('auth:api');
+
+        if (!$login) {
+            return response()->json(['message' => '请先登录'], 401);
+        }
 
         if (!$usid) {
             return response()->json(['message' => '缺少被关注用户'], 422);
@@ -179,7 +184,7 @@ class LiveOauthController extends BaseController
      */
     public function unfollow(Request $request, string $usid)
     {
-        $login = $request->user();
+        $login = $request->user('auth:api');
 
         if (!$usid) {
             return response()->json(['message' => '缺少被取消关注的用户'], 400);
