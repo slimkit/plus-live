@@ -187,6 +187,10 @@ class LiveOauthController extends BaseController
     public function unfollow(Request $request)
     {
         $login = $request->user('api');
+        if (!$login) {
+            return response()->json(['message' => '请先登录'], 401);
+        }
+
         $usid = $request->input('usid');
         if (!$usid) {
             return response()->json(['message' => '缺少被取消关注的用户'], 400);
