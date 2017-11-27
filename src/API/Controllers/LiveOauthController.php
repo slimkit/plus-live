@@ -176,7 +176,7 @@ class LiveOauthController extends BaseController
                 'user' => $login,
             ]);
 
-            return response()->json('', 201);
+            return response()->json(['code' => '00000', 'data' => ['is_follow' => 1]], 200);
         });
     }
 
@@ -216,7 +216,7 @@ class LiveOauthController extends BaseController
             $login->extra()->decrement('followings_count', 1);
             $follow->extra()->decrement('followers_count', 1);
 
-            return response()->json('', 201);
+            return response()->json(['code' => '00000', 'data' => ['is_follow' => 0]], 200);
         });
     }
 
