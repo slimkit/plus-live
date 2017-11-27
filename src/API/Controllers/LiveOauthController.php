@@ -132,7 +132,7 @@ class LiveOauthController extends BaseController
 
         $uid = $model->where('usid', $usid)->value('uid');
 
-        return response()->json(['code' => '00000', 'data' => ['is_follow' => $user->hasFollwing($uid)]], 200);
+        return response()->json(['code' => '00000', 'data' => ['is_follow' => intval($user->hasFollwing($uid))]], 200);
     }
 
     /**
