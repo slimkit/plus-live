@@ -43,7 +43,7 @@ class LiveGiftController extends BaseController
 
         $liveUser->getConnection()->transaction( function () use ($targetUser, $liveUser, $data, $charge) {
             // 扣除操作用户余额
-            $liveUser->wallet()->decrement('balance', $data['num'] / $ratio * 10000);
+            $liveUser->wallet()->decrement('balance', $data['num'] * 10000 / $ratio );
             // 扣费记录
             $userCharge = clone $charge;
             $userCharge->channel = 'user';
@@ -57,7 +57,7 @@ class LiveGiftController extends BaseController
 
             if($targetUser->wallet) {
                 // 增加目标用户余额
-                $targetUser->wallet()->increment('balance', $data['num'] / $ratio * 10000);
+                $targetUser->wallet()->increment('balance', $data['num'] * 10000 / $ratio);
 
                 $charge->user_id = $targetUser->id;
                 $charge->channel = 'user';
