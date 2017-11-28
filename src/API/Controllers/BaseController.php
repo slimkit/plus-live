@@ -135,4 +135,26 @@ class BaseController extends Controller
         return false;
     }
 
+    /**
+     * 通知直播服务器需要更新
+     * 只做发送请求，不做回调说明
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function notifyLiveServer (Request $request, $config = [])
+    {
+        $user = $request->user();
+        $model = new LiveUserInfo();
+
+        $usid = $model->where('uid', $user->id)->value('usid');
+
+        $data = [ 'usid' => $usid];
+
+        // 通知地址
+        $notify_url = $config['stream_server'] . '/users/syncNotify';
+
+        $client = new Client();
+
+        $client->request('post', $notify_url, ['form_params' => $data, 'headers' => $config['curl_header']]);
+    }
 }

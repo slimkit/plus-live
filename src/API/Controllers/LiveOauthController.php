@@ -208,7 +208,7 @@ class LiveOauthController extends BaseController
 
         if (!$status) {
 
-            return response()->json(['code' => '', 'message' => '你并没有关注该用户'], 200);
+            return response()->json(['code' => '00506', 'message' => '你并没有关注该用户'], 200);
         }
 
         return $login->getConnection()->transaction(function () use ($login, $follow) {
@@ -295,58 +295,14 @@ class LiveOauthController extends BaseController
         return response()->json(['code' => '00000', 'data' => $data], 200);
     }
 
-    // /**
-    //  * 预操作口令生成
-    //  * @param Request
-    //  */
-    // public function ZB_Trade_Get_Pretoken(Request $request)
-    // {
-    //     $token = $request->input('token');
-    //     $hextime = $request->input('hextime');
-    //     $user_id = $request->input('user_id');
-    //     $user = $request->user();
-
-    //     $uid = $user->id;
-
-    //     if (!$token || !$hextime || !$user_id)
-    //     {
-    //         return response()->json(['message' => '参数不完整'], 422);
-    //     }
-
-    //     // 口令时间
-    //     $ctime = hexdec($hextime);
-
-    //     if ($ctime + 120 < NOW_TIME)
-    //     {
-    //         return response()->json(['message' => '交易超市'], 422);
-    //     }
-
-    //     $m_token = md5($ctime . $type . $user_id);
-    //     if (strtolower($m_token) != strtolower($token)) {
-    //         return response()->json(['message' => '口令验证失败'], 400);
-    //     }
-
-    //     $data = [
-    //         'uid' => $user_id,
-    //         'to_uid' => $uid
-    //     ];
-
-    //     // 尝试获取交易口令
-    //     $token = $this->getPreToken($data);
-    //     if ($token) {
-    //         return response()->json(['pre_token' => $this->jiami($token)], 201);
-    //     }
-
-    //     return response()->json(['message' => '交易失败'], 500)
-    // }
-
     /**
      * 发起赞兑换金币订单.
+     * resetful接口
      *
      * @Author   Wayne[qiaobin@zhiyicx.com]
      * @DateTime 2016-10-26T17:36:37+0800s
      */
-    public function createOrder(Request $request, WalletCharge $charge)
+    public function createOrder(Request $request, WalletCharge $charge, CommonConfig $config)
     {
         $count = $request->input('count');
         $user = $request->user();
@@ -359,12 +315,19 @@ class LiveOauthController extends BaseController
             return response()->json(['message' => '你的赞数量不足'], 422);
         }
 
-        $ratio = config('live.exchange_type');
-        // 正确的处理方式 $amount = $systemRatio * ($count / $ratio) / 10000;
-        $amount = $count / $ratio;
+        // 赞到金币的兑换比例
+        $exchange_type = config('live.exchange_type');
+        // 金币到cny的兑换比例
+        $ratio = $config->where('namespace', 'common')
+            ->where('name', 'wallet:ratio')
+            ->value('value') ?: 1000;
+
+        // 计算成CNY分单位
+        $amount = $count * 10000 / $exchange_type / $ratio;
 
         $user->getConnection()->transaction( function () use ($user, $amount, $charge) {
-            $user->wallet()->increment('balance', $amount);
+            $user->wallet()->increment('balance', $amount); // 加余额
+            $user->extra()->decrement('live_zans_remain', $count); // 减赞
 
             $charge->user_id = $user->id;
             $charge->channel = 'live';
@@ -377,6 +340,9 @@ class LiveOauthController extends BaseController
 
             $charge->save();
         });
+
+        // 通知直播服务器需要更新当前用户信息
+        $this->notifyLiveServer($request, $this->setting);
 
         return response()->json(['message' => '兑换成功'], 201);
     }
