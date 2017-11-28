@@ -82,7 +82,7 @@ class LiveOauthController extends BaseController
                 'fans_count'        => $user->user->extra ? $user->user->extra->followers_count : 0,
                 'zan_count'         => $user->user->extra ? $user->user->extra->live_zans_count : 0,
                 'is_follow'         => $login ? intval($login->hasFollwing($user->user)) : 0,
-                'cover'             => $user->user->extra->cover ? (object) [ '0' => $user->user->extra->cover] : (object) [],
+                'cover'             => $user->user->extra ? (object) [ '0' => $user->user->extra->cover] : (object) [],
                 'avatar'            => $user->user->avatar ? (object) [ '0' => $user->user->avatar ] : (object) [],
                 'live_time'         => $user->user->extra ? $user->user->extra->live_time : 0,
                 'usid'              => $usid
@@ -283,7 +283,7 @@ class LiveOauthController extends BaseController
                     'follow_count'      => $u->extra ? $u->extra->followings_count : 0,
                     'fans_count'        => $u->extra ? $u->extra->followers_count : 0,
                     'zan_count'         => $u->extra ? $u->extra->live_zans_count : 0,
-                    'cover'             => $u->extra->cover ? (object) [ '0' => $u->extra->cover ] : (object) [],
+                    'cover'             => $u->extra ? (object) [ '0' => $u->extra->cover ] : (object) [],
                     'avatar'            =>  $u->avatar ? (object) [ '0' => $u->avatar ] : (object) [],
                     'live_time'         => $u->extra ? $u->extra->live_time : 0,
                     'usid'              => $usid
