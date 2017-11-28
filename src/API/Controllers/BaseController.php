@@ -128,7 +128,7 @@ class BaseController extends Controller
             $model->ticket = $response['data']['ticket'];
 
             $model->save();
-
+            $this->_notifyLiveServer($model->usid, $config);
             return $model;
         }
 
@@ -148,6 +148,18 @@ class BaseController extends Controller
 
         $usid = $model->where('uid', $user->id)->value('usid');
 
+        $data = [ 'usid' => $usid];
+
+        // 通知地址
+        $notify_url = $config['stream_server'] . '/users/syncNotify';
+
+        $client = new Client();
+
+        $client->request('post', $notify_url, ['form_params' => $data, 'headers' => $config['curl_header']]);
+    }
+
+    public function _notifyLiveServer ( string $usid, $config = [])
+    {
         $data = [ 'usid' => $usid];
 
         // 通知地址

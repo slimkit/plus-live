@@ -61,6 +61,8 @@ class LiveUserController extends BaseController
             $model->ticket = $response['data']['ticket'];
 
             $model->save();
+            
+            $this->notifyLiveServer(Request $request, $this->setting);
 
             return response()->json(['msg' => '直播用户更新成功', 'data' => $model])->setStatusCode(201);
         } else {
