@@ -4,10 +4,11 @@ namespace Slimkit\PlusLive\API\Controllers;
 
 use GuzzleHttp\Client;
 use Zhiyi\Plus\Models\User;
+use Zhiyi\Plus\Service\Push;
 use Illuminate\Http\Request;
 use Zhiyi\Plus\Models\UserExtra;
 // use Zhiyi\Plus\Jobs\PushMessage;
-use Zhiyi\Plus\Service\Push;
+use Zhiyi\Plus\Models\CommonConfig;
 use GuzzleHttp\Psr7\Request as GRequest;
 use Slimkit\PlusLive\Models\LiveUserInfo;
 
@@ -77,7 +78,7 @@ class LiveUserController extends BaseController
      * @param LiveUserInfo $liveUser
      * @return mixed
      */
-    public function getInfo(Request $request, LiveUserInfo $liveUser)
+    public function getInfo(Request $request, LiveUserInfo $liveUser, CommonConfig $config)
     {
         $usid = $request->input('usid');
 
@@ -91,11 +92,16 @@ class LiveUserController extends BaseController
             return response()->json(['message' => '该用户未开通直播'])->setStatusCode(404);
         }
 
+        // 获取转换比例
+        $ratio = $config->where('namespace', 'common')
+            ->where('name', 'wallet:ratio')
+            ->value('value') ?: 1000;
+
         // return response()->json($liveUser->user->extra)->setStatusCode(200);
         return response()->json([
             'status'        => 1,
             'data'          => [
-                'gold'          => $liveUser->user->wallet->balance,
+                'gold'          => $liveUser->user->wallet->balance / 100 / 100 * $ratio,
                 'zan_count'     => $liveUser->user->extra->live_zans_count,
                 'zan_remain'    => $liveUser->user->extra->live_zans_remain,
                 'uname'         => $liveUser->user->name,
