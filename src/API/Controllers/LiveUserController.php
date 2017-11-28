@@ -93,11 +93,14 @@ class LiveUserController extends BaseController
 
         // return response()->json($liveUser->user->extra)->setStatusCode(200);
         return response()->json([
-            'gold'          => $liveUser->user->wallet->balance,
-            'zan_count'     => $liveUser->user->extra->live_zans_count,
-            'zan_remain'    => $liveUser->user->extra->live_zans_remain,
-            'uname'         => $liveUser->user->name,
-            'sex'           => $liveUser->user->sex 
+            'status'        => 1,
+            'data'          => [
+                'gold'          => $liveUser->user->wallet->balance,
+                'zan_count'     => $liveUser->user->extra->live_zans_count,
+                'zan_remain'    => $liveUser->user->extra->live_zans_remain,
+                'uname'         => $liveUser->user->name,
+                'sex'           => $liveUser->user->sex 
+            ]
         ])->setStatusCode(200);
     }
 
