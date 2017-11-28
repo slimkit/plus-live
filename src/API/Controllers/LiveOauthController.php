@@ -119,7 +119,7 @@ class LiveOauthController extends BaseController
         $user = $request->user('api');
         if (!$user) {
 
-            return response()->json(['message' => '请先登录'], 401);
+            return response()->json(['code' => '00001', 'message' => '请先登录'], 200);
         }
 
         $model = new LiveUserInfo();
@@ -127,7 +127,7 @@ class LiveOauthController extends BaseController
         $usid = $request->input('usid');
 
         if (!$usid) {
-            return response()->json(['message' => "缺少需要查询的用户"], 422);
+            return response()->json(['code' => '00502','message' => "缺少需要查询的用户"], 200);
         }
 
         $uid = $model->where('usid', $usid)->value('uid');
@@ -144,17 +144,17 @@ class LiveOauthController extends BaseController
         $login = $request->user('api');
         $usid = $request->input('usid');
         if (!$login) {
-            return response()->json(['message' => '请先登录'], 401);
+            return response()->json(['code' => '00001', 'message' => '请先登录'], 200);
         }
 
         if (!$usid) {
-            return response()->json(['message' => '缺少被关注用户'], 422);
+            return response()->json(['code' => '00502', 'message' => '缺少被关注用户'], 200);
         }
 
         $uid = $this->liveUser->where('usid', $usid)->value('uid');
 
         if ($uid === $login->id) {
-            return response()->json(['message' => '不能关注自己'], 400);
+            return response()->json(['code' => '00506', 'message' => '不能关注自己'], 200);
         }
 
         $follow = $this->userModel->find($uid);
@@ -163,7 +163,7 @@ class LiveOauthController extends BaseController
 
         if ($status) {
 
-            return response()->json(['message' => '已关注过该用户'], 422);
+            return response()->json(['code' => '00506', 'message' => '已关注过该用户'], 200);
         }
 
         return $login->getConnection()->transaction(function () use ($login, $follow) {
@@ -188,18 +188,18 @@ class LiveOauthController extends BaseController
     {
         $login = $request->user('api');
         if (!$login) {
-            return response()->json(['message' => '请先登录'], 401);
+            return response()->json(['code' => '00001', 'message' => '请先登录'], 200);
         }
 
         $usid = $request->input('usid');
         if (!$usid) {
-            return response()->json(['message' => '缺少被取消关注的用户'], 400);
+            return response()->json(['code' => '00502', 'message' => '缺少被取消关注的用户'], 200);
         }
 
         $uid = $this->liveUser->where('usid', $usid)->value('uid');
 
         if (!$uid === $login->id) {
-            return response()->json(['message' => '不能对自己取关'], 400);
+            return response()->json(['code' => '00506', 'message' => '不能对自己取关'], 200);
         }
 
         $follow = $this->userModel->find($uid);
@@ -208,7 +208,7 @@ class LiveOauthController extends BaseController
 
         if (!$status) {
 
-            return response()->json(['message' => '你并没有关注该用户'], 422);
+            return response()->json(['code' => '', 'message' => '你并没有关注该用户'], 200);
         }
 
         return $login->getConnection()->transaction(function () use ($login, $follow) {
