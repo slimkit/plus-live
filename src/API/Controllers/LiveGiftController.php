@@ -41,7 +41,7 @@ class LiveGiftController extends BaseController
             ->where('name', 'wallet:ratio')
             ->value('value') ?: 1000;
 
-        $liveUser->getConnection()->transaction( function () use ($targetUser, $liveUser, $data, $charge) {
+        $liveUser->getConnection()->transaction( function () use ($targetUser, $liveUser, $data, $charge, $ratio) {
             // 扣除操作用户余额
             $liveUser->wallet()->decrement('balance', $data['num'] * 10000 / $ratio );
             // 扣费记录
