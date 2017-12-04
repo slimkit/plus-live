@@ -377,11 +377,11 @@ class LiveOauthController extends BaseController
             return response()->json(['code' => '40007', 'message' => '交易超时'], 422);
         }
         $m_token = md5($ctime.$type.$uid);
-        // if (strtolower($m_token) != strtolower($token)) {
-        //     //口令验证失败
+        if (strtolower($m_token) != strtolower($token)) {
+            //口令验证失败
 
-        //     return response()->json(['code' => '50000', 'message' => '口令验证失败'], 422);
-        // }
+            return response()->json(['code' => '50000', 'message' => '口令验证失败'], 422);
+        }
         //条件
         $data = [
             'uid'    => $uid,
@@ -394,22 +394,6 @@ class LiveOauthController extends BaseController
         //是否存在未使用的口令
 
         $hasOne = $table->firstOrCreate($data, ['token' =>  $this->jiami(date('mdHs', time() - 60).mt_rand(10000, 99999).$data['uid'])]);
-        // if ($hasOne) {
-        //     //存在
-        //     $save['token'] = $this->jiami(date('mdHs', time() - 60).mt_rand(10000, 99999).$data['uid']);
-
-        //     $table->where('token_id='.$hasOne['token_id'])->save($save);
-        //     $token = $save['token'];
-        // } else {
-        //     //不存在
-        //     $data['token'] = $this->jiami(date('mdHs', time() - 60).mt_rand(10000, 99999).$data['uid']);
-        //     $data['create_time'] = time();
-        //     if ($table->add($data)) {
-        //         $token = $data['token'];
-        //     } else {
-        //         $token = '';
-        //     }
-        // }
         $token = $hasOne->token;
         if ($token) {
             return response()->json(['code' => '00000', 'data' => ['pre_token' => $this->jiami($token)]]);
