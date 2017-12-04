@@ -34,7 +34,6 @@ class LiveUserController extends BaseController
         $stream_server = $this->setting['stream_server'] ?? '';
         $usid_prex = $this->setting['usid_prex'] ?? '';
         $curl_header = $this->setting['curl_header'] ?? '';
-        
 
         if (!$stream_server || !$usid_prex) {
             return response()->json(['msg' => '请先设置直播服务器']);
@@ -175,10 +174,12 @@ class LiveUserController extends BaseController
         $alert = $user->name . '正在直播，快去看看吧';
 
         $followers = $user->followers->pluck('id');
-        $alias = implode(',', $followers);
-        $extras = ['action' => 'notice', 'type' => 'live'];
+        if ($followers) {
+            $alias = implode(',', $followers);
+            $extras = ['action' => 'notice', 'type' => 'live'];
 
-        dispatch(new PushMessage($alert, $alias, $extras));
+            dispatch(new PushMessage($alert, $alias, $extras));
+        }
 
         return response()->json(['status' => true])->setStatusCode(202);
     }
