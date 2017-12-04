@@ -142,12 +142,12 @@ class BaseController extends Controller
      */
     public function notifyLiveServer (Request $request, $config = [])
     {
-        $user = $request->user();
+        $user = $request->user('api');
         $model = new LiveUserInfo();
 
         $usid = $model->where('uid', $user->id)->value('usid');
 
-        $data = [ 'usid' => $usid];
+        $data = ['usid' => $usid];
 
         // 通知地址
         $notify_url = $config['stream_server'] . '/users/syncNotify';
