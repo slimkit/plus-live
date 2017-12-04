@@ -50,7 +50,7 @@ class LiveGiftController extends BaseController
             $userCharge->account = $targetUser->id;
             $userCharge->subject = '直播送礼物';
             $userCharge->action = 0;
-            $userCharge->amount = $data['num'];
+            $userCharge->amount = $data['num'] * 10000 / $ratio;
             $userCharge->body = sprintf('给[%s]的直播间送《%s》', $targetUser->name, $data['description']);
             $userCharge->status = 1;
             $liveUser->walletCharges()->save($userCharge);
@@ -64,7 +64,7 @@ class LiveGiftController extends BaseController
                 $charge->account = $liveUser->id;
                 $charge->subject = '直播被送礼物';
                 $charge->action = 1;
-                $charge->amount = $data['num'];
+                $charge->amount = $data['num'] * 10000 / $ratio;
                 $charge->body = sprintf('直播被[%s]赠送《%s》', $liveUser->name, $data['description']);
                 $charge->status = 1;
                 $charge->save();
