@@ -350,6 +350,8 @@ class LiveOauthController extends BaseController
         // 通知直播服务器需要更新当前用户信息
         $this->notifyLiveServer($request, $this->setting);
 
+        $charge->usid = LiveUserInfo::where('uid', $user->id)->value('usid');
+
         return response()->json(['code' => '00000', 'data' => $charge], 201);
     }
 
