@@ -327,7 +327,7 @@ class LiveOauthController extends BaseController
         // 计算成CNY分单位
         $amount = $count * 10000 / $exchange_type / $ratio;
 
-        $user->getConnection()->transaction( function () use ($user, $amount, $charge) {
+        $user->getConnection()->transaction( function () use ($user, $amount, $charge, $count) {
             $user->wallet()->increment('balance', $amount); // 加余额
             $user->extra()->decrement('live_zans_remain', $count); // 减赞
 
