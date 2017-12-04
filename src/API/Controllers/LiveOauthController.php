@@ -309,12 +309,16 @@ class LiveOauthController extends BaseController
         $count = $request->input('count');
         $user = $request->user('api');
 
+        if (! $user) {
+            return response()->json(['code' => '00001', 'message' => '请先登录'], 200);
+        }
+
         if (!$count || $count < 0) {
-            return response()->json(['message' => '兑换数量必须大于0'], 400);
+            return response()->json(['code' => '70302', 'message' => '兑换数量必须大于0'], 400);
         }
 
         if (!$count > $user->extra->live_zans_remain) {
-            return response()->json(['message' => '你的赞数量不足'], 422);
+            return response()->json(['code' => '70302', 'message' => '你的赞数量不足'], 422);
         }
 
         // 赞到金币的兑换比例
@@ -346,7 +350,7 @@ class LiveOauthController extends BaseController
         // 通知直播服务器需要更新当前用户信息
         $this->notifyLiveServer($request, $this->setting);
 
-        return response()->json(['message' => '兑换成功'], 201);
+        return response()->json(['code' => '00000', 'data' => $charge], 201);
     }
 
     public function getPreToken(Request $request)
