@@ -64,7 +64,7 @@ class HomeController
 
             default:
 
-                return response()->json(['status' => 0, 'message' => '参数错误'], 422);
+                return response()->json(['status' => 0, 'message' => '参数错误']);
                 break;
         }
     }

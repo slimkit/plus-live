@@ -314,11 +314,11 @@ class LiveOauthController extends BaseController
         }
 
         if (!$count || $count < 0) {
-            return response()->json(['code' => '70302', 'message' => '兑换数量必须大于0'], 400);
+            return response()->json(['code' => '70302', 'message' => '兑换数量必须大于0']);
         }
 
         if ($count > $user->extra->live_zans_remain) {
-            return response()->json(['code' => '70302', 'message' => '你的赞数量不足'], 422);
+            return response()->json(['code' => '70302', 'message' => '你的赞数量不足']);
         }
 
         // 赞到金币的兑换比例
