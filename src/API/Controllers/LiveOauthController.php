@@ -307,7 +307,7 @@ class LiveOauthController extends BaseController
     public function createOrder(Request $request, WalletCharge $charge, CommonConfig $config)
     {
         $count = $request->input('count');
-        $user = $request->user();
+        $user = $request->user('api');
 
         if (!$count || $count < 0) {
             return response()->json(['message' => '兑换数量必须大于0'], 400);
