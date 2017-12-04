@@ -6,6 +6,7 @@ use Zhiyi\Plus\Models\User;
 use Illuminate\Http\Request;
 use Zhiyi\Plus\Auth\JWTAuthToken;
 use Zhiyi\Plus\Models\WalletCharge;
+use Zhiyi\Plus\Models\CommonConfig;
 use Slimkit\PlusLive\Models\LiveUserInfo;
 use Slimkit\PlusLive\Models\LivePreOrderToken;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
