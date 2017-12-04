@@ -333,7 +333,10 @@ class LiveOauthController extends BaseController
 
         $user->getConnection()->transaction( function () use ($user, $amount, $charge, $count) {
             $user->wallet()->increment('balance', $amount); // 加余额
-            $user->extra()->decrement('live_zans_remain', $count); // 减赞
+            // 减赞
+            $user->extra->live_zans_remain = $user->extra->live_zans_remain - $count;
+            $user->extra->save();
+            // $user->extra()->decrement('live_zans_remain', $count); // 减赞
 
             $charge->user_id = $user->id;
             $charge->channel = 'live';
