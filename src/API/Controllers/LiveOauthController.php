@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Zhiyi\Plus\Auth\JWTAuthToken;
 use Zhiyi\Plus\Models\WalletCharge;
 use Slimkit\PlusLive\Models\LiveUserInfo;
+use Slimkit\PlusLive\Models\LivePreOrderToken;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 
 class LiveOauthController extends BaseController
@@ -347,4 +348,73 @@ class LiveOauthController extends BaseController
         return response()->json(['message' => '兑换成功'], 201);
     }
 
+    public function getPreToken(Request $request)
+    {
+        $login = $request->user('api');
+
+        if (!$login) {
+            return response()->json(['code' => '00001', 'message' => '请先登录'], 200);
+        }
+
+        $type = (int) $request->input('type');
+        $token = $request->input('token');
+        $hextime = $request->input('hextime');
+        $uid = (int) $request->input('user_id');
+
+        if ((!$type || $type != 1) || !$token || !$hextime || !$uid) {
+
+            return response()->json(['code' => '40007', 'message' => '参数错误'], 422);
+        }
+        if ($uid != $login->id) {
+
+            return response()->json(['code' => '40007', 'message' => '您没有权限执行此操作'], 422);
+        }
+        //口令时间检测
+        $ctime = hexdec($hextime);
+        if ($ctime + 120 < time()) {
+            //过期的口令
+
+            return response()->json(['code' => '40007', 'message' => '交易超时'], 422);
+        }
+        $m_token = md5($ctime.$type.$uid);
+        // if (strtolower($m_token) != strtolower($token)) {
+        //     //口令验证失败
+
+        //     return response()->json(['code' => '50000', 'message' => '口令验证失败'], 422);
+        // }
+        //条件
+        $data = [
+            'uid'    => $uid,
+            'to_uid' => $login->id,
+        ];
+        //尝试获取预交易口令
+        $table = new LivePreOrderToken();
+        //禁用状态
+        $data['disabled'] = 0;
+        //是否存在未使用的口令
+
+        $hasOne = $table->firstOrCreate($data, ['token' =>  $this->jiami(date('mdHs', time() - 60).mt_rand(10000, 99999).$data['uid'])]);
+        // if ($hasOne) {
+        //     //存在
+        //     $save['token'] = $this->jiami(date('mdHs', time() - 60).mt_rand(10000, 99999).$data['uid']);
+
+        //     $table->where('token_id='.$hasOne['token_id'])->save($save);
+        //     $token = $save['token'];
+        // } else {
+        //     //不存在
+        //     $data['token'] = $this->jiami(date('mdHs', time() - 60).mt_rand(10000, 99999).$data['uid']);
+        //     $data['create_time'] = time();
+        //     if ($table->add($data)) {
+        //         $token = $data['token'];
+        //     } else {
+        //         $token = '';
+        //     }
+        // }
+        $token = $hasOne->token;
+        if ($token) {
+            return response()->json(['code' => '00000', 'data' => ['pre_token' => $this->jiami($token)]]);
+        }
+
+        return response()->json(['code' => '70500', 'message' => '交易失败']);
+    }
 }

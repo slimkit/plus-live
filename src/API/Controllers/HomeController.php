@@ -56,6 +56,12 @@ class HomeController
                 return $app->call([app(LiveOauthController::class), 'createOrder']);
                 break;
 
+            // 生成预交易口令
+            case 'ZB_Trade_Get_Pretoken':
+
+                return $app->call([app(LiveOauthController::class), 'getPreToken']);
+                break;
+
             default:
 
                 return response()->json(['status' => 0, 'message' => '参数错误'], 422);

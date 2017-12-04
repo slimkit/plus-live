@@ -53,11 +53,8 @@ class BaseController extends Controller
     }
 
         //加密函数
-    protected function jiami($txt, $key = null)
+    protected function jiami($txt, $key = '')
     {
-        if (empty($key)) {
-            $key = C('SECURE_CODE');
-        }
         $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-=_';
         $nh = rand(0, 64);
         $ch = $chars[$nh];
@@ -78,11 +75,8 @@ class BaseController extends Controller
     }
 
     //解密函数
-    protected function jiemi($txt, $key = null)
+    protected function jiemi($txt, $key = '')
     {
-        if (empty($key)) {
-            $key = C('SECURE_CODE');
-        }
         $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-=_';
         $ch = $txt[0];
         $nh = strpos($chars, $ch);
