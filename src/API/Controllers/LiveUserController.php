@@ -98,11 +98,10 @@ class LiveUserController extends BaseController
             ->where('name', 'wallet:ratio')
             ->value('value') ?: 1000;
 
-        // return response()->json($liveUser->user->extra)->setStatusCode(200);
         return response()->json([
             'status'        => 1,
             'data'          => [
-                'gold'          => $liveUser->user->wallet->balance / 100 / 100 * $ratio,
+                'gold'          => $liveUser->user->wallet->balance * 10000 / $ratio,
                 'zan_count'     => $liveUser->user->extra->live_zans_count,
                 'zan_remain'    => $liveUser->user->extra->live_zans_remain,
                 'uname'         => $liveUser->user->name,
