@@ -72,6 +72,8 @@ class LiveGiftController extends BaseController
             // 直播被送礼物只有交易记录，没有通知
         });
 
+        $this->_notifyLiveServer($request->input('usid'), $this->setting);
+
         return response()->json(['status' => 1, 'message' => '交易成功'], 200);
     }
 }
