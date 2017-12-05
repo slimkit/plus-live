@@ -235,6 +235,9 @@ class LiveOauthController extends BaseController
         $limit = $request->input('limit', 15);
         $data = [];
         $uid = $model->where('usid', $usid)->value('uid');
+        if (!$uid) {
+            return response()->json(['code' => '00001', 'message' => '请先登录'], 200);
+        }
 
         $user = $userModel->find($uid);
         if ($type === 'follow') {
