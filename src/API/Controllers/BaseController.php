@@ -17,7 +17,7 @@ class BaseController extends Controller
         $this->setting = config('live');
     }
 
-    public function isUrl ($urs = '') 
+    public function isUrl ($url = '')
     {
         return preg_match('/^http(s)?:\/\/.+/', $url) ? true : false;
     }

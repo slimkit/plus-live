@@ -1,3 +1,9 @@
 /vendor/
 .DS_Store
 /node_modules/
+.idea/misc.xml
+.idea/modules.xml
+.idea/php.xml
+.idea/slimkit-plus-live.iml
+.idea/vcs.xml
+.idea/workspace.xml

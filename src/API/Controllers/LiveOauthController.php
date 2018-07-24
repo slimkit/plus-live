@@ -118,7 +118,7 @@ class LiveOauthController extends BaseController
      * @return [type]           [description]
      */
     public function getFollowStatus(Request $request)
-    {   
+    {
         $user = $request->user('api');
         if (!$user) {
 
@@ -228,7 +228,7 @@ class LiveOauthController extends BaseController
      * @param Request
      */
     public function getUsers(Request $request, LiveUserInfo $model, User $userModel, ApplicationContract $app)
-    {   
+    {
         $usid = $request->input('usid');
         $type = $request->input('type', 'follow');
         $offset = $request->input('offset');
@@ -324,31 +324,22 @@ class LiveOauthController extends BaseController
         if ($count > $user->extra->live_zans_remain) {
             return response()->json(['code' => '70302', 'message' => '你的赞数量不足']);
         }
-
-        // 赞到金币的兑换比例
-        $exchange_type = config('live.exchange_type');
-        // 金币到cny的兑换比例
-        $ratio = $config->where('namespace', 'common')
-            ->where('name', 'wallet:ratio')
-            ->value('value') ?: 1000;
-
-        // 计算成CNY分单位
-        $amount = $count * 10000 / $exchange_type / $ratio;
+        // 计算成积分单位
+        $amount = $count;
 
         $user->getConnection()->transaction( function () use ($user, $amount, $charge, $count) {
-            $user->wallet()->increment('balance', $amount); // 加余额
+            $user->currency()->increment('sum', $amount); // 加余额
             // 减赞
             $user->extra->live_zans_remain = $user->extra->live_zans_remain - $count;
             $user->extra->save();
-            // $user->extra()->decrement('live_zans_remain', $count); // 减赞
 
             $charge->user_id = $user->id;
             $charge->channel = 'live';
             $charge->account = $user->id;
-            $charge->subject = '直播获取的赞兑换金币';
+            $charge->subject = '直播获取的赞兑换积分';
             $charge->action = 1;
             $charge->amount = $amount;
-            $charge->body = '将直播获得的赞兑换成为金币';
+            $charge->body = '将直播获得的赞兑换成为积分';
             $charge->status = 1;
 
             $charge->save();
