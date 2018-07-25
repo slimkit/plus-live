@@ -79,7 +79,7 @@ class LiveUserController extends BaseController
      * @param LiveUserInfo $liveUser
      * @return mixed
      */
-    public function getInfo(Request $request, LiveUserInfo $liveUser, CommonConfig $config)
+    public function getInfo(Request $request, LiveUserInfo $liveUser)
     {
         $usid = $request->input('usid');
 
@@ -93,19 +93,14 @@ class LiveUserController extends BaseController
             return response()->json(['message' => '该用户未开通直播'])->setStatusCode(404);
         }
 
-        // 获取转换比例
-        $ratio = $config->where('namespace', 'common')
-            ->where('name', 'wallet:ratio')
-            ->value('value') ?: 1000;
-
         return response()->json([
-            'status'        => 1,
-            'data'          => [
-                'gold'          => $liveUser->user->wallet->balance * 10000 / $ratio,
-                'zan_count'     => $liveUser->user->extra->live_zans_count,
-                'zan_remain'    => $liveUser->user->extra->live_zans_remain,
-                'uname'         => $liveUser->user->name,
-                'sex'           => $liveUser->user->sex 
+            'status' => 1,
+            'data' => [
+                'gold' => $liveUser->user->currency->sum ?? 0,
+                'zan_count' => $liveUser->user->extra->live_zans_count,
+                'zan_remain' => $liveUser->user->extra->live_zans_remain,
+                'uname' => $liveUser->user->name,
+                'sex' => $liveUser->user->sex
             ]
         ])->setStatusCode(200);
     }

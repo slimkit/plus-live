@@ -121,18 +121,13 @@ class LiveOauthController extends BaseController
     {
         $user = $request->user('api');
         if (!$user) {
-
             return response()->json(['code' => '00001', 'message' => '请先登录'], 200);
         }
-
         $model = new LiveUserInfo();
-
         $usid = $request->input('usid');
-
         if (!$usid) {
             return response()->json(['code' => '00502','message' => "缺少需要查询的用户"], 200);
         }
-
         $uid = $model->where('usid', $usid)->value('uid');
 
         return response()->json(['code' => '00000', 'data' => ['is_follow' => intval($user->hasFollwing($uid))]], 200);
@@ -161,7 +156,9 @@ class LiveOauthController extends BaseController
         }
 
         $follow = $this->userModel->find($uid);
-
+        if (!$follow) {
+            return response()->json(['code' => '00404', 'message' => '目标用户不存在'], 200);
+        }
         $status = $login->hasFollwing($follow);
 
         if ($status) {
@@ -249,7 +246,6 @@ class LiveOauthController extends BaseController
                 }
             ]);
 
-            // return response()->json($user->followings, 200);
             $data = $user->followings;
         }
 
@@ -324,8 +320,9 @@ class LiveOauthController extends BaseController
         if ($count > $user->extra->live_zans_remain) {
             return response()->json(['code' => '70302', 'message' => '你的赞数量不足']);
         }
+        $exchange_type = config('live.exchange_type');
         // 计算成积分单位
-        $amount = $count;
+        $amount = $count / $exchange_type;
 
         $user->getConnection()->transaction( function () use ($user, $amount, $charge, $count) {
             $user->currency()->increment('sum', $amount); // 加余额
@@ -376,7 +373,7 @@ class LiveOauthController extends BaseController
         }
         //口令时间检测
         $ctime = hexdec($hextime);
-        if ($ctime + 120 < time()) {
+        if ($ctime + 300 < time()) {
             //过期的口令
 
             return response()->json(['code' => '40007', 'message' => '交易超时'], 422);

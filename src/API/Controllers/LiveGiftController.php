@@ -34,37 +34,32 @@ class LiveGiftController extends BaseController
 
         if ($liveUser->wallet->balance < $data['num']) {
             return response()->json(['status' => 0, 'message' => '余额不足'])->setStatusCode(200);
-        }  
+        }
 
-        // 获取转换比例
-        $ratio = $config->where('namespace', 'common')
-            ->where('name', 'wallet:ratio')
-            ->value('value') ?: 1000;
-
-        $liveUser->getConnection()->transaction( function () use ($targetUser, $liveUser, $data, $charge, $ratio) {
+        $liveUser->getConnection()->transaction( function () use ($targetUser, $liveUser, $data, $charge) {
             // 扣除操作用户余额
-            $liveUser->wallet()->decrement('balance', $data['num'] * 10000 / $ratio );
+            $liveUser->currency()->decrement('sum', $data['num']);
             // 扣费记录
             $userCharge = clone $charge;
             $userCharge->channel = 'user';
             $userCharge->account = $targetUser->id;
             $userCharge->subject = '直播送礼物';
             $userCharge->action = 0;
-            $userCharge->amount = $data['num'] * 10000 / $ratio;
+            $userCharge->amount = $data['num'];
             $userCharge->body = sprintf('给[%s]的直播间送《%s》', $targetUser->name, $data['description']);
             $userCharge->status = 1;
             $liveUser->walletCharges()->save($userCharge);
 
             if($targetUser->wallet) {
                 // 增加目标用户余额
-                $targetUser->wallet()->increment('balance', $data['num'] * 10000 / $ratio);
+                $targetUser->wallet()->increment('balance', $data['num']);
 
                 $charge->user_id = $targetUser->id;
                 $charge->channel = 'user';
                 $charge->account = $liveUser->id;
                 $charge->subject = '直播被送礼物';
                 $charge->action = 1;
-                $charge->amount = $data['num'] * 10000 / $ratio;
+                $charge->amount = $data['num'];
                 $charge->body = sprintf('直播被[%s]赠送《%s》', $liveUser->name, $data['description']);
                 $charge->status = 1;
                 $charge->save();
