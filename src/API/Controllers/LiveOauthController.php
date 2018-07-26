@@ -2,11 +2,10 @@
 
 namespace Slimkit\PlusLive\API\Controllers;
 
+use Zhiyi\Plus\Models\CurrencyType;
+use Zhiyi\Plus\Models\CurrencyOrder;
 use Zhiyi\Plus\Models\User;
 use Illuminate\Http\Request;
-use Zhiyi\Plus\Auth\JWTAuthToken;
-use Zhiyi\Plus\Models\WalletCharge;
-use Zhiyi\Plus\Models\CommonConfig;
 use Slimkit\PlusLive\Models\LiveUserInfo;
 use Slimkit\PlusLive\Models\LivePreOrderToken;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
@@ -79,7 +78,7 @@ class LiveOauthController extends BaseController
                 'location'          => $user->user->location ?: '',
                 'reg_time'          => $user->user->created_at->toDateTimeString(),
                 'is_verified'       => $user->user->verified ? 1 : 0,
-                'gold'              => $user->user->wallet ? $user->user->wallet->balance : 0,
+                'gold'              => $user->user->currency ? $user->user->currency->sum : 0,
                 'follow_count'      => $user->user->extra ? $user->user->extra->followings_count : 0,
                 'fans_count'        => $user->user->extra ? $user->user->extra->followers_count : 0,
                 'zan_count'         => $user->user->extra ? $user->user->extra->live_zans_count : 0,
@@ -240,7 +239,7 @@ class LiveOauthController extends BaseController
         if ($type === 'follow') {
             $user->load([
                 'followings' => function ($query) use ($offset, $limit) {
-                    return $query->with('wallet')->when($offset, function ($query) use ($offset) {
+                    return $query->with('currency')->when($offset, function ($query) use ($offset) {
                         return $query->offset($offset);
                     })->paginate($limit);
                 }
@@ -252,7 +251,7 @@ class LiveOauthController extends BaseController
         if ($type === 'following') {
             $user->load([
                 'followers' => function ($query) use ($offset, $limit) {
-                    return $query->with('wallet')->when($offset, function ($query) use ($offset) {
+                    return $query->with('currency')->when($offset, function ($query) use ($offset) {
                         return $query->offset($offset);
                     })->paginate($limit);
                 }
@@ -281,7 +280,7 @@ class LiveOauthController extends BaseController
                     'location'          => $u->location ?: '',
                     'reg_time'          => $u->created_at->toDateTimeString(),
                     'is_verified'       => $u->verified ? 1 : 0,
-                    'gold'              => $u->wallet ? $u->wallet->balance : 0,
+                    'gold'              => $u->currency ? $u->currency->sum : 0,
                     'follow_count'      => $u->extra ? $u->extra->followings_count : 0,
                     'fans_count'        => $u->extra ? $u->extra->followers_count : 0,
                     'zan_count'         => $u->extra ? $u->extra->live_zans_count : 0,
@@ -304,11 +303,14 @@ class LiveOauthController extends BaseController
      * @Author   Wayne[qiaobin@zhiyicx.com]
      * @DateTime 2016-10-26T17:36:37+0800s
      */
-    public function createOrder(Request $request, WalletCharge $charge, CommonConfig $config)
+    public function createOrder(Request $request, CurrencyOrder $charge)
     {
         $count = $request->input('count');
         $user = $request->user('api');
-
+        $currency_type = CurrencyType::find(1);
+        if (! $currency_type) {
+            return response()->json(['status' => 0, 'message' => '出错了,请稍后再试'])->setStatusCode(200);
+        }
         if (! $user) {
             return response()->json(['code' => '00001', 'message' => '请先登录'], 200);
         }
@@ -323,21 +325,21 @@ class LiveOauthController extends BaseController
         $exchange_type = config('live.exchange_type');
         // 计算成积分单位
         $amount = $count / $exchange_type;
-
-        $user->getConnection()->transaction( function () use ($user, $amount, $charge, $count) {
+        $user->getConnection()->transaction( function () use ($user, $amount, $charge, $count, $currency_type) {
             $user->currency()->increment('sum', $amount); // 加余额
             // 减赞
             $user->extra->live_zans_remain = $user->extra->live_zans_remain - $count;
             $user->extra->save();
 
-            $charge->user_id = $user->id;
-            $charge->channel = 'live';
-            $charge->account = $user->id;
-            $charge->subject = '直播获取的赞兑换积分';
-            $charge->action = 1;
+            $charge->owner_id = $user->id;
+            $charge->target_type = 'live';
+            $charge->target_id = 0;
+            $charge->title = '直播获取的赞兑换积分';
+            $charge->type = 1;
+            $charge->currency = $currency_type->id;
             $charge->amount = $amount;
             $charge->body = '将直播获得的赞兑换成为积分';
-            $charge->status = 1;
+            $charge->state = 1;
 
             $charge->save();
         });
