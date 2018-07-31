@@ -60,7 +60,7 @@ class LiveGiftController extends BaseController
                 // 增加目标用户余额
                 $targetUser->currency()->increment('sum', $data['num']);
                 // 被送的人
-                $currencyOrder->owner_id = $liveUser->id;
+                $currencyOrder->owner_id = $targetUser->id;
                 $currencyOrder->title = '直播被送礼物';
                 $currencyOrder->body = sprintf('直播被[%s]赠送《%s》', $liveUser->name, $data['description']);
                 $currencyOrder->type = 1;
