@@ -7,7 +7,6 @@ use Zhiyi\Plus\Models\User;
 use Zhiyi\Plus\Service\Push;
 use Illuminate\Http\Request;
 use Zhiyi\Plus\Models\UserExtra;
-// use Zhiyi\Plus\Jobs\PushMessage;
 use Zhiyi\Plus\Models\CommonConfig;
 use GuzzleHttp\Psr7\Request as GRequest;
 use Slimkit\PlusLive\Models\LiveUserInfo;
@@ -65,10 +64,8 @@ class LiveUserController extends BaseController
 
             return response()->json(['msg' => '直播用户更新成功', 'data' => $model])->setStatusCode(201);
         } else {
-
             return response()->json(['msg' => '注册直播用户失败'])->setStatusCode(500);
         }
-        
     }
 
     /**
@@ -151,29 +148,29 @@ class LiveUserController extends BaseController
      */
     public function pushLive(Request $request, LiveUserInfo $liveUser, User $user)
     {
-        $usid = $request->input('usid');
+//        $usid = $request->input('usid');
+//
+//        if (!$this->is_ZhiBoService($request)) {
+//            return response()->json(['message' => '授权错误'])->setStatusCode(401);
+//        }
+//
+//        $status = $request->input('status');
+//        if (!$usid) {
+//            return response()->json(['message' => '参数传递错误'])->setStatusCode(400);
+//        }
 
-        if (!$this->is_ZhiBoService($request)) {
-            return response()->json(['message' => '授权错误'])->setStatusCode(401);
-        }
+//        $liveUser = $liveUser->where('usid', $usid)->first();
 
-        $status = $request->input('status');
-        if (!$usid) {
-            return response()->json(['message' => '参数传递错误'])->setStatusCode(400);
-        }
+//        $user = $user->find($liveUser->uid);
+//        $alert = $user->name . '正在直播，快去看看吧';
 
-        $liveUser = $liveUser->where('usid', $usid)->first();
+//        $followers = $user->followers->pluck('id');
+//        if ($followers) {
+//            $alias = implode(',', $followers);
+//            $extras = ['action' => 'notice', 'type' => 'live'];
 
-        $user = $user->find($liveUser->uid);
-        $alert = $user->name . '正在直播，快去看看吧';
-
-        $followers = $user->followers->pluck('id');
-        if ($followers) {
-            $alias = implode(',', $followers);
-            $extras = ['action' => 'notice', 'type' => 'live'];
-
-            dispatch(new PushMessage($alert, $alias, $extras));
-        }
+//            dispatch(new PushMessage($alert, $alias, $extras));
+//        }
 
         return response()->json(['status' => true])->setStatusCode(202);
     }
